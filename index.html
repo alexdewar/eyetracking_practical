@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Eye tracking practical</title>
+        
+        <!-- xLabs API -->
+        <script src="xlabs/api/xlabs.js"></script>
+        
+        <script>
+            window.onload = function () {
+                if (xLabs.extensionVersion() === null) {
+                    document.write("<h2>Error</h2>This webpage must be viewed in Google Chrome and <a href=\"https://chrome.google.com/webstore/detail/xlabs-headeyegaze-tracker/emeeadaoegehllidjmmokeaahobondco?hl=en\">the xLabs Chrome extension</a> must be installed.")
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Eye tracking practical</h1>
+    </body>
+</html>
