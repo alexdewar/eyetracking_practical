@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Experiment</title>
+        <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            #canvas {
+                background-color: black;
+            }
+        </style>
+        <script>
+            window.onload = function () {
+                // show/hide the canvas on entering/exiting fullscreen mode
+                canvas.addEventListener("webkitfullscreenchange", function () {
+                    canvas.style.display = window.innerHeight === screen.height ? 'block' : 'none';
+                });
+            };
+
+            function goFullscreen() {
+                var canvas = document.getElementById('canvas');
+                canvas.webkitRequestFullscreen();
+            }
+        </script>
+    </head>
+    <body>
+        <p><a href="javascript:goFullscreen();">Click to begin the experiment.</a></p>
+        <canvas id="canvas" style='display: none;'></canvas>
+    </body>
+</html>
