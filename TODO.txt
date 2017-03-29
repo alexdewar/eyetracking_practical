@@ -1,0 +1,9 @@
+- display instructions to participants
+- incorporate training games into experiment html file
+- display slideshow of images
+- add another image (or something) to check if calibration is working
+- assign participants unique ID codes
+- log participants' results in memory
+- upload results to server
+- some way for Ps to retrieve their results from server
+- some way of collating the data on the server (with fig, as bonus)
