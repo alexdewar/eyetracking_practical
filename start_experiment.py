@@ -2,6 +2,8 @@
 
 from __future__ import print_function
 
+LISTEN_PORT = 8000
+
 import sys
 import subprocess
 if sys.version_info[0] > 2:
@@ -12,13 +14,12 @@ else:
     import SocketServer as socketserver
 
 print('Starting Google Chrome...')
-subprocess.call(['google-chrome-stable', 'http://localhost:8000'])
-
-PORT = 8000
+subprocess.Popen(['google-chrome-stable', 'http://localhost:%d' % LISTEN_PORT])
 
 handler = httpserver.SimpleHTTPRequestHandler
 
-httpd = socketserver.TCPServer(("", PORT), handler)
+socketserver.TCPServer.allow_reuse_address = True
+httpd = socketserver.TCPServer(("", LISTEN_PORT), handler)
 
-print("Starting webserver listening on port", PORT)
+print('Starting webserver listening on port', LISTEN_PORT)
 httpd.serve_forever()
