@@ -14,12 +14,16 @@ else:
     import SocketServer as socketserver
 
 print('Starting Google Chrome...')
-subprocess.Popen(['google-chrome-stable', 'http://localhost:%d' % LISTEN_PORT])
+url = 'http://localhost:%d' % LISTEN_PORT;
+if sys.platform.startswith('linux'):
+    subprocess.Popen(['google-chrome-stable', url])
+elif sys.platform == 'win32':
+    subprocess.Popen(['C:\Program Files (x86)\Google\Chrome\Application\chrome.exe', url])
 
 handler = httpserver.SimpleHTTPRequestHandler
 
 socketserver.TCPServer.allow_reuse_address = True
-httpd = socketserver.TCPServer(("", LISTEN_PORT), handler)
+httpd = socketserver.TCPServer(('localhost', LISTEN_PORT), handler)
 
 print('Starting webserver listening on port', LISTEN_PORT)
 httpd.serve_forever()
