@@ -4,15 +4,9 @@
         <title>Eye tracking practical</title>
         <link rel='shortcut icon' href='img/favicon.ico' type='image/x-icon'>
         <meta charset='UTF-8'>
-        <!--<meta name='viewport' content='width=device-width, initial-scale=1.0'>-->
         
         <style>
-            #div_fs {
-                background-color: blue;
-                width: 90%;
-                height: 90%;
-            }
-            
+            /* fullscreen elements are initially hidden */
             .fullscreen {
                 display: none;
             }
@@ -40,17 +34,74 @@
         <script>
             var isfullscreen = false;
             
-            var slides = [
-                text_slide('Welcome to the University of Sussex eye tracking practical. Click next to continue.'),
-                text_slide("Click <a href='xlabs/ants/index.html'>here</a> to run the first calibration game."),
-                text_slide("Click <a href='experiment.html'>here</a> to begin the experiment.")
-            ];
+            var slides = [];
+            
+            var imgs = []; // array for preloaded images
+            var img_count = 3; // total number of images for image slides
+            
+            // preload images for image slides
+            function preload_images(callback) {
+                var toload = img_count;
+                
+                for (var i = 0; i < img_count; i++) {
+                    var img = new Image();
+                    imgs.push(img);
+
+                    img.onload = function() {
+                        if (--toload === 0) {
+                            callback();
+                        }
+                    };
+                    img.src = 'img/img' + i + '.jpg';
+                }
+            }
+            
+            function img_slide(imgi) {
+                var img = imgs[imgi];
+                
+                var canvas = $('#canvas');
+                
+                // work out the size and position of image on canvas
+                var img_rat = img.width / img.height;
+                var canvas_rat = canvas[0].width / canvas[0].height;
+                if (img_rat > canvas_rat) { // image is *relatively* wider than screen
+                    var dest_width = canvas[0].width;
+                    var dest_height = dest_width / img_rat;
+                    var dest_left = 0;
+                    var dest_top = (canvas[0].height - dest_height) / 2;
+                } else { // image is relatively taller than screen
+                    var dest_height = canvas[0].height;
+                    var dest_width = dest_height * img_rat;
+                    var dest_left = (canvas[0].width - dest_width) / 2;
+                    var dest_top = 0;
+                }
+                
+                return function() {
+                    // hide text instructions
+                    $('#textbox').hide();
+                    
+                    var ctx = canvas[0].getContext('2d');
+                    
+                    // clear canvas
+                    ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                    
+                    // draw "slide" image on canvas
+                    ctx.drawImage(img, dest_left, dest_top, dest_width, dest_height);
+                    
+                    // make canvas visible
+                    canvas.show();
+                };
+            }
             
             function text_slide(text) {
                 return function() {
+                    // hide canvas for displaying images
                     $('#canvas').hide();
                     
+                    // change instruction text
                     $('#text')[0].innerHTML = text;
+                    
+                    // make instruction textbox visible
                     $('#textbox').show();
                 };
             }
@@ -72,16 +123,32 @@
                 var canvas = $('canvas');
                 canvas[0].width = screen.width;
                 canvas[0].height = screen.height;
+                canvas.click(slide_next);
                 
-                // show/hide the canvas on entering/exiting fullscreen mode
-                $(document).on('webkitfullscreenchange', function () {
-                    isfullscreen = !isfullscreen;
-                    if (isfullscreen) {
-                        slidei = 0;
-                        slides[0]();
-                    } else {
-                        $('.fullscreen').hide();
-                    }
+                preload_images(function() {
+                    console.log('images preloaded');
+                    
+                    // initialise set of "slides" for experiment
+                    slides = [
+                        text_slide('Welcome to the University of Sussex eye tracking practical. Click next to continue.'),
+                        img_slide(0),
+                        img_slide(1),
+                        img_slide(2),
+                        text_slide('Experiment completed! Thank you for taking part.')
+                    ];
+
+                    // actions on entering/exiting fullscreen mode
+                    $(document).on('webkitfullscreenchange', function () {
+                        isfullscreen = !isfullscreen;
+                        if (isfullscreen) {
+                            console.log('entering fullscreen mode');
+                            slidei = 0; // reset slide counter (start from beginning)
+                            slides[0](); // show first slide
+                        } else {
+                            console.log('exiting fullscreen mode');
+                            $('.fullscreen').hide(); // hide all the "fullscreen" elements
+                        }
+                    });
                 });
             };
 
