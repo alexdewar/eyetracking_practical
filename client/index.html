@@ -37,6 +37,7 @@
         <script>
             var IMG_COUNT = 3; // total number of images for image slides
             var ANTS_GAME_DURATION = 10; // seconds
+            var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
             
             var isfullscreen = false;
             
@@ -207,7 +208,7 @@
                 console.log('loading resources for ants game');
                 ants = new XLabsAnts();
                 ants.init(function() {
-                    xLabs.setup(xlabs_ready, xlabs_update, null, "2bba2616-cf81-4078-85b9-ddd16749abcb");
+                    xLabs.setup(xlabs_ready, xlabs_update, null, XLABS_DEVELOPER_TOKEN);
                 });
             }
             
