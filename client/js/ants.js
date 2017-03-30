@@ -377,37 +377,3 @@ XLabsAnts.ant.prototype.render = function( xLabsAnts ) {
     }
 
 }
-
-
-
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
-
-// commented out by AD
-/*
-function onXlabsReady() {
-    window.addEventListener( "beforeunload", function() {
-        xLabs.setConfig( "system.mode", "off" );
-    });
-
-    xLabs.setConfig( "calibration.clear", "1" ); // this also clears the memory buffer
-    xLabs.setConfig( "system.mode", "learning" );
-    xLabs.setConfig( "browser.canvas.paintLearning", "0" );
-
-    ants = new XLabsAnts();
-    ants.init( function() {
-        document.addEventListener( "click", function(e) { ants.onClick(e); } );
-        ants.mainLoop();
-    });
-}
-
-function onXlabsUpdate() {
-    ants.updateGaze();
-}
-
-xLabs.setup( onXlabsReady, onXlabsUpdate, null, "2bba2616-cf81-4078-85b9-ddd16749abcb" );
-*/
