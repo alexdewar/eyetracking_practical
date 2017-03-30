@@ -104,11 +104,11 @@ XLabsAnts.prototype.addRandomAnt = function() {
 
 XLabsAnts.prototype.init = function( onReady ) {
     resources.load([
-        './img/frame_squish.png'
+        'img/ants/frame_squish.png'
     ]);
 
     for( i = 0; i < this.NUM_ANT_WALKING_FRAMES; ++i ) {
-        resources.load(['./img/frame_00'+i+'.gif']);
+        resources.load(['img/ants/frame_00'+i+'.gif']);
     }
 
 
@@ -363,10 +363,10 @@ XLabsAnts.ant.prototype.render = function( xLabsAnts ) {
         if( this.state === ANT_STATE_MOVING ) {
             var frameIdx = Math.floor( this.distanceMoved / xLabsAnts.movingAnimationFrameDistancePixels );
             frameIdx = frameIdx % xLabsAnts.NUM_ANT_WALKING_FRAMES;
-            var img = resources.get("./img/frame_00"+frameIdx+".gif");
+            var img = resources.get("img/ants/frame_00"+frameIdx+".gif");
         }
         else if( this.state === ANT_STATE_SQUISHED ) {
-            var img = resources.get("./img/frame_squish.png");
+            var img = resources.get("img/ants/frame_squish.png");
         }
 
         Canvas.context.drawImage( img,
