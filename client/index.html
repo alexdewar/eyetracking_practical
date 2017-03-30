@@ -121,6 +121,22 @@
                 }
             }
             
+            function xlabs_ready() {
+                console.log('xlabs ready');
+                
+                $(window).on('beforeunload', function() {
+                    xLabs.setConfig('system.mode', 'off');
+                });
+                
+                xLabs.setConfig('calibration.clear', '1');
+                xLabs.setConfig('system.mode', 'learning');
+                xLabs.setConfig('browser.canvas.paintLearning', '0');
+            }
+            
+            function xlabs_update() {
+                //console.log('xlabs update');
+            }
+            
             window.onload = function () {
                 if (xLabs.extensionVersion() === null) { // no xlabs or not running in chrome
                     document.write(
@@ -131,6 +147,9 @@
                 
                     return;
                 }
+                
+                xLabs.setup(xlabs_ready, xlabs_update, null, "2bba2616-cf81-4078-85b9-ddd16749abcb");
+                return;
                 
                 // set canvas to fill screen
                 var canvas = $('canvas');
