@@ -1,45 +1,114 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Experiment</title>
-        <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-        <meta charset="UTF-8">
-        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+        <title>Eye tracking practical</title>
+        <link rel='shortcut icon' href='img/favicon.ico' type='image/x-icon'>
+        <meta charset='UTF-8'>
+        <!--<meta name='viewport' content='width=device-width, initial-scale=1.0'>-->
+        
         <style>
-            #expt_canvas {
+            #div_fs {
+                background-color: blue;
+                width: 90%;
+                height: 90%;
+            }
+            
+            .fullscreen {
                 display: none;
+            }
+            
+            .text {
+                display: none;
+            }
+            
+            #textbox {
+                position: absolute;
+                transform: translateY(-50%) translateX(-50%);
+                top: 50%;
+                left: 50%;
+                width: 40%;
+                margin: 0px auto;
+                border: dashed;
+                background-color: white;
+            }
+            
+            #canvas {
                 background-color: orange;
             }
         </style>
-        <script src="js/jquery-3.2.0.min.js"></script>
+        
+        <script src='js/jquery-3.2.0.min.js'></script>
         <script>
             var isfullscreen = false;
+            var textmax = 2;
+            
+            function text_el(num) {
+                return $('#text' + num);
+            }
+            
+            function text_prev() {
+                if (texti > 0) {
+                    text_el(texti).hide();
+                    text_el(--texti).show();
+                }
+            }
+
+            function text_next() {
+                if (texti < textmax) {
+                    text_el(texti).hide();
+                    text_el(++texti).show();
+                }
+            }
             
             window.onload = function () {
-                var canvas = $('#expt_canvas');
+                // set canvas to fill screen
+                var canvas = $('canvas');
                 canvas[0].width = screen.width;
                 canvas[0].height = screen.height;
                 
                 // show/hide the canvas on entering/exiting fullscreen mode
-                $(document).on("webkitfullscreenchange", function () {
+                $(document).on('webkitfullscreenchange', function () {
                     isfullscreen = !isfullscreen;
-                    if (!isfullscreen) {
-                        canvas.hide();
-                        $('#text').show();
+                    if (isfullscreen) {
+                        $('#inittext').hide();
+                        $('#textbox').show();
+                        
+                        texti = 0;
+                        text_el(0).show();
                     } else {
-                        $('#text').hide();
-                        canvas.show();
+                        $('.text').hide();
+                        $('.fullscreen').hide();
+                        $('#inittext').show();
                     }
                 });
             };
 
-            function goFullscreen() {
-                $('#expt_canvas')[0].webkitRequestFullscreen();
+            function go_fullscreen() {
+                $('#div_fs')[0].webkitRequestFullscreen();
             }
         </script>
     </head>
     <body>
-        <p id="text">Welcome to the University of Sussex eye tracking practical! Click <a href="#" onclick="goFullscreen();">here</a> to begin the experiment.</p>
-        <canvas id="expt_canvas"></canvas>
+        <p id='inittext'>
+            Welcome to the University of Sussex eye tracking practical!
+            Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.
+        </p>
+        
+        <div id='div_fs'>
+            <div class='fullscreen' id='textbox'>
+                <p>
+                    <span class='text' id='text0'>Welcome to the University of Sussex eye tracking practical. Click next to continue.</span>
+                    <span class='text' id='text1'>Click <a href='xlabs/ants/index.html'>here</a> to run the first calibration game.</span>
+                    <span class='text' id='text2'>Click <a href='experiment.html'>here</a> to begin the experiment.</span>
+                </p>
+
+                <div style='text-align: center;'>
+                    <a href='#' onclick='text_prev();'>Previous</a>
+                    | <a href='#' onclick='text_next();'>Next</a>
+                </div>
+            </div>
+            
+            <canvas class='fullscreen' id='canvas'></canvas>
+        </div>
     </body>
 </html>
