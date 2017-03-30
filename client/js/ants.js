@@ -387,6 +387,8 @@ XLabsAnts.ant.prototype.render = function( xLabsAnts ) {
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 
+// commented out by AD
+/*
 function onXlabsReady() {
     window.addEventListener( "beforeunload", function() {
         xLabs.setConfig( "system.mode", "off" );
@@ -399,12 +401,6 @@ function onXlabsReady() {
     ants = new XLabsAnts();
     ants.init( function() {
         document.addEventListener( "click", function(e) { ants.onClick(e); } );
-        // document.addEventListener( "mousemove", function(e) {
-        //     if( xLabs.documentOffsetReady() ) {
-        //         ants.mouseX = xLabs.scr2docX(e.screenX)
-        //         ants.mouseY = xLabs.scr2docY(e.screenY)
-        //     }
-        // });
         ants.mainLoop();
     });
 }
@@ -414,12 +410,4 @@ function onXlabsUpdate() {
 }
 
 xLabs.setup( onXlabsReady, onXlabsUpdate, null, "2bba2616-cf81-4078-85b9-ddd16749abcb" );
-
-
-
-
-
-
-
-
-
+*/
