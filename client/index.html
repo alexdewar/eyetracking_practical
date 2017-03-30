@@ -41,6 +41,7 @@
 
             var isfullscreen = false;
 
+            // different sets of slides for experiment
             var intro_slides = [
                 text_slide('<p>Welcome to the eye tracking practical.</p> ' +
                         '<p>During this experiment, we will track the positions of your eyes using the webcam in front of you.</p> ' +
@@ -50,11 +51,23 @@
                         'You should make sure that your hair is not in your face and if you wear glasses but have only a mild prescription, consider removing them (this is not essential).</p> ' +
                         '<p>Most importantly, you should try to keep your head in the same position during both the calibration and testing phases of the experiment.</p>')
             ];
-
             var ants_slides = [
                 text_slide('This is the ant game'),
                 ants_start
             ];
+            var img_slides = [
+                img_slide(0),
+                img_slide(1),
+                img_slide(2),
+            ];
+
+            // initialise set of "slides" for experiment
+            var slides = intro_slides
+                    .concat(ants_slides)
+                    .concat(img_slides)
+                    .concat([
+                        text_slide('Experiment completed! Thank you for taking part.')
+                    ]);
 
             var imgs = []; // array for preloaded images
 
@@ -90,25 +103,23 @@
             }
 
             function img_slide(imgi) {
-                var img = imgs[imgi];
-
-                // work out the size and position of image on canvas
-                var img_rat = img.width / img.height;
-                var canvas_rat = Canvas.element.width / Canvas.element.height;
-                if (img_rat > canvas_rat) { // image is *relatively* wider than screen
-                    var dest_width = Canvas.element.width;
-                    var dest_height = dest_width / img_rat;
-                    var dest_left = 0;
-                    var dest_top = (Canvas.element.height - dest_height) / 2;
-                } else { // image is relatively taller than screen
-                    var dest_height = Canvas.element.height;
-                    var dest_width = dest_height * img_rat;
-                    var dest_left = (Canvas.element.width - dest_width) / 2;
-                    var dest_top = 0;
-                }
-
                 return function () {
-                    set_canvas_click(slide_next);
+                    var img = imgs[imgi];
+
+                    // work out the size and position of image on canvas
+                    var img_rat = img.width / img.height;
+                    var canvas_rat = Canvas.element.width / Canvas.element.height;
+                    if (img_rat > canvas_rat) { // image is *relatively* wider than screen
+                        var dest_width = Canvas.element.width;
+                        var dest_height = dest_width / img_rat;
+                        var dest_left = 0;
+                        var dest_top = (Canvas.element.height - dest_height) / 2;
+                    } else { // image is relatively taller than screen
+                        var dest_height = Canvas.element.height;
+                        var dest_width = dest_height * img_rat;
+                        var dest_left = (Canvas.element.width - dest_width) / 2;
+                        var dest_top = 0;
+                    }
 
                     // hide text instructions
                     $('#textbox').hide();
@@ -116,6 +127,8 @@
                     // draw "slide" image on canvas
                     Canvas.clear();
                     Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
+
+                    set_canvas_click(slide_next);
 
                     // make canvas visible
                     Canvas.show();
@@ -195,16 +208,6 @@
 
             function on_images_preloaded() {
                 console.log('images preloaded');
-
-                // initialise set of "slides" for experiment
-                slides = intro_slides
-                        .concat(ants_slides)
-                        .concat([
-                            img_slide(0),
-                            img_slide(1),
-                            img_slide(2),
-                            text_slide('Experiment completed! Thank you for taking part.')
-                        ]);
 
                 // actions on entering/exiting fullscreen mode
                 $(document).on('webkitfullscreenchange', function () {
