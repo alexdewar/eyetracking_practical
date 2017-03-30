@@ -115,7 +115,6 @@ XLabsAnts.prototype.init = function( onReady ) {
     Gaze.xyLearningRate = 1.0; //0.8;
 
     // this.addFullScreenCanvas("antsCanvas");
-    Canvas.add();
     Canvas.show();
 
     var self = this;

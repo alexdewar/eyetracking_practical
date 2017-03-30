@@ -35,20 +35,22 @@
         
         <!-- main script -->
         <script>
+            var IMG_COUNT = 3; // total number of images for image slides
+            var ANTS_GAME_DURATION = 10; // seconds
+            
             var isfullscreen = false;
             
             var slides = [];
             
             var imgs = []; // array for preloaded images
-            var img_count = 3; // total number of images for image slides
             
             var xlabs_started = false;
             
             // preload images for image slides
             function preload_images(callback) {
-                var toload = img_count;
+                var toload = IMG_COUNT;
                 
-                for (var i = 0; i < img_count; i++) {
+                for (var i = 0; i < IMG_COUNT; i++) {
                     var img = new Image();
                     imgs.push(img);
 
@@ -82,6 +84,8 @@
                 }
                 
                 return function() {
+                    Canvas.hide();
+                    
                     // hide text instructions
                     $('#textbox').hide();
                     
@@ -100,6 +104,8 @@
             
             function text_slide(text) {
                 return function() {
+                    Canvas.hide();
+                    
                     // hide canvas for displaying images
                     $('#canvas').hide();
                     
@@ -137,7 +143,6 @@
                 //xLabs.setConfig('browser.canvas.paintLearning', '0');
                 
                 ants = new XLabsAnts();
-                ants_init();
             }
             
             function xlabs_update() {
@@ -158,10 +163,18 @@
             }
             
             function ants_init() {
-                ants.init( function() {
+                $('#canvas').hide();
+                $('#textbox').hide();
+                
+                ants.init(function() {
                     $(document).click(function(e) { ants.onClick(e); });
                     ants.mainLoop();
                 });
+                
+                setTimeout(function() {
+                    Canvas.hide();
+                    slide_next();
+                }, ANTS_GAME_DURATION * 1000);
             }
             
             function set_inittext(text) {
@@ -175,6 +188,7 @@
                 slides = [
                     text_slide('Welcome to the University of Sussex eye tracking practical. Click next to continue.'),
                     img_slide(0),
+                    ants_init,
                     img_slide(1),
                     img_slide(2),
                     text_slide('Experiment completed! Thank you for taking part.')
@@ -209,7 +223,7 @@
                     return;
                 }
                 
-                // set canvas to fill screen
+                // set our canvas to fill screen
                 var canvas = $('canvas');
                 canvas[0].width = screen.width;
                 canvas[0].height = screen.height;

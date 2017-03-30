@@ -100,10 +100,9 @@ var Canvas = {
     // canvas element (usually invisible graphical overlay)
     Canvas.element = document.createElement( 'canvas' );
     Canvas.element.setAttribute( "id", "xLabsAppCanvas" );
-    Canvas.element.setAttribute( "class", "fullscreen" );
     Canvas.element.setAttribute( "width",  screen.width  );//window.innerWidth);
     Canvas.element.setAttribute( "height", screen.height );//window.innerHeight);
-    Canvas.element.setAttribute( "style", "background:0; background-color: blue" );//window.innerHeight);
+    Canvas.element.setAttribute( "style", "background:0" );//window.innerHeight);
     Canvas.context = Canvas.element.getContext( "2d" );
 
     // add these UI tools to the document:	
@@ -120,12 +119,13 @@ var Canvas = {
 
     var head = document.getElementsByTagName( 'head' )[0];
     head.appendChild( style );
-    $('#div_fs')[0].appendChild(Canvas.element);
+    document.getElementsByTagName('body')[ 0 ].appendChild( Canvas.element );
 
     // add a painting callback for the canvas:
     window.addEventListener('resize', Canvas.resize );
 
     Canvas.resize(); // first time
+    //Canvas.setCaptureMouse( false );
     Canvas.setTimeout();
   },
 
