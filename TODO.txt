@@ -1,8 +1,8 @@
+- show P webcam output before calibration games begin
 - respond appropriately when P accidentally exits fullscreen mode
 - respond appropriately when image doesn't load
 - display instructions to participants
 - incorporate training games into experiment html file
-- display slideshow of images
 - add another image (or something) to check if calibration is working
 - assign participants unique ID codes
 - log participants' results in memory
