@@ -115,6 +115,8 @@
             function slide_next() {
                 if (slidei < slides.length - 1) {
                     slides[++slidei]();
+                } else {
+                    document.webkitExitFullscreen();
                 }
             }
             
