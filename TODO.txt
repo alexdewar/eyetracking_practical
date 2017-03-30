@@ -1,4 +1,5 @@
 client:
+- fix bug where canvas displays image after fullscreen closed
 - incorporate training games into experiment html file
 - add another image (or something) to check if calibration is working
 - show P webcam output before calibration games begin
