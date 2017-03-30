@@ -63,51 +63,9 @@
                 }
             }
             
-            function img_slide(imgi) {
-                var img = imgs[imgi];
-                
-                var canvas = $('#canvas');
-                
-                // work out the size and position of image on canvas
-                var img_rat = img.width / img.height;
-                var canvas_rat = canvas[0].width / canvas[0].height;
-                if (img_rat > canvas_rat) { // image is *relatively* wider than screen
-                    var dest_width = canvas[0].width;
-                    var dest_height = dest_width / img_rat;
-                    var dest_left = 0;
-                    var dest_top = (canvas[0].height - dest_height) / 2;
-                } else { // image is relatively taller than screen
-                    var dest_height = canvas[0].height;
-                    var dest_width = dest_height * img_rat;
-                    var dest_left = (canvas[0].width - dest_width) / 2;
-                    var dest_top = 0;
-                }
-                
-                return function() {
-                    Canvas.hide();
-                    
-                    // hide text instructions
-                    $('#textbox').hide();
-                    
-                    var ctx = canvas[0].getContext('2d');
-                    
-                    // clear canvas
-                    ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
-                    
-                    // draw "slide" image on canvas
-                    ctx.drawImage(img, dest_left, dest_top, dest_width, dest_height);
-                    
-                    // make canvas visible
-                    canvas.show();
-                };
-            }
-            
             function text_slide(text) {
                 return function() {
                     Canvas.hide();
-                    
-                    // hide canvas for displaying images
-                    $('#canvas').hide();
                     
                     // change instruction text
                     $('#text')[0].innerHTML = text;
@@ -115,6 +73,56 @@
                     // make instruction textbox visible
                     $('#textbox').show();
                 };
+            }
+            
+            function img_slide(imgi) {
+                var img = imgs[imgi];
+                
+                // work out the size and position of image on canvas
+                var img_rat = img.width / img.height;
+                var canvas_rat = Canvas.element.width / Canvas.element.height;
+                if (img_rat > canvas_rat) { // image is *relatively* wider than screen
+                    var dest_width = Canvas.element.width;
+                    var dest_height = dest_width / img_rat;
+                    var dest_left = 0;
+                    var dest_top = (Canvas.element.height - dest_height) / 2;
+                } else { // image is relatively taller than screen
+                    var dest_height = Canvas.element.height;
+                    var dest_width = dest_height * img_rat;
+                    var dest_left = (Canvas.element.width - dest_width) / 2;
+                    var dest_top = 0;
+                }
+                
+                return function() {
+                    set_canvas_click(slide_next);
+                    
+                    // hide text instructions
+                    $('#textbox').hide();
+                    
+                    // draw "slide" image on canvas
+                    Canvas.clear();
+                    Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
+                    
+                    // make canvas visible
+                    Canvas.show();
+                };
+            }
+            
+            function ants_start() {
+                console.log('starting ants game');
+                
+                $('#textbox').hide();
+                
+                Canvas.clear();
+                
+                setTimeout(function () {
+                    ants.run_game = false;
+                    slide_next();
+                }, ANTS_GAME_DURATION * 1000);
+                
+                set_canvas_click(function(e) { ants.onClick(e); });
+                ants.run_game = true;
+                ants.mainLoop();
             }
             
             function slide_prev() {
@@ -141,8 +149,6 @@
                 //xLabs.setConfig('calibration.clear', '1');
                 xLabs.setConfig('system.mode', 'learning');
                 //xLabs.setConfig('browser.canvas.paintLearning', '0');
-                
-                ants = new XLabsAnts();
             }
             
             function xlabs_update() {
@@ -162,23 +168,12 @@
                     "Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.");
             }
             
-            function ants_init() {
-                $('#canvas').hide();
-                $('#textbox').hide();
-                
-                ants.init(function() {
-                    $(document).click(function(e) { ants.onClick(e); });
-                    ants.mainLoop();
-                });
-                
-                setTimeout(function() {
-                    Canvas.hide();
-                    slide_next();
-                }, ANTS_GAME_DURATION * 1000);
-            }
-            
             function set_inittext(text) {
                 $('#inittext')[0].innerHTML = text;
+            }
+            
+            function set_canvas_click(f) {
+                $('#xLabsAppCanvas').off('click').click(f);
             }
             
             function on_images_preloaded() {
@@ -188,7 +183,7 @@
                 slides = [
                     text_slide('Welcome to the University of Sussex eye tracking practical. Click next to continue.'),
                     img_slide(0),
-                    ants_init,
+                    ants_start,
                     img_slide(1),
                     img_slide(2),
                     text_slide('Experiment completed! Thank you for taking part.')
@@ -208,8 +203,12 @@
                         $('.fullscreen').hide(); // hide all the "fullscreen" elements
                     }
                 });
-
-                xLabs.setup(xlabs_ready, xlabs_update, null, "2bba2616-cf81-4078-85b9-ddd16749abcb");
+                
+                console.log('loading resources for ants game');
+                ants = new XLabsAnts();
+                ants.init(function() {
+                    xLabs.setup(xlabs_ready, xlabs_update, null, "2bba2616-cf81-4078-85b9-ddd16749abcb");
+                });
             }
             
             window.onload = function () {
@@ -222,12 +221,6 @@
                 
                     return;
                 }
-                
-                // set our canvas to fill screen
-                var canvas = $('canvas');
-                canvas[0].width = screen.width;
-                canvas[0].height = screen.height;
-                canvas.click(slide_next);
                 
                 preload_images(on_images_preloaded);
             };
@@ -251,8 +244,6 @@
                     | <a href='#' onclick='slide_next();'>Next</a>
                 </div>
             </div>
-            
-            <canvas class='fullscreen' id='canvas'></canvas>
         </div>
         
         <!-- xlabs API -->

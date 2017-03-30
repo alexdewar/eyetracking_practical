@@ -92,6 +92,8 @@ XLabsAnts = function() {
     this.movingAnimationFrameDistancePixels = 10;
 
     this.NUM_ANT_WALKING_FRAMES = 4;
+    
+    this.run_game = false;
 }
 
 XLabsAnts.prototype.addRandomAnt = function() {
@@ -111,29 +113,19 @@ XLabsAnts.prototype.init = function( onReady ) {
         resources.load(['img/ants/frame_00'+i+'.gif']);
     }
 
-
     Gaze.xyLearningRate = 1.0; //0.8;
-
-    // this.addFullScreenCanvas("antsCanvas");
-    Canvas.show();
-
-    var self = this;
-    
-    // for( i = 0; i < 100; i++ ) {
-    //     addRandom();
-    // }
 
     resources.onReady( onReady );
 }
 
-
 XLabsAnts.prototype.mainLoop = function() {
-    var self = this;
-    this.update();
-    this.render();
-    window.requestAnimationFrame( function() { self.mainLoop(); });
+    if (this.run_game) {
+        var self = this;
+        this.update();
+        this.render();
+        window.requestAnimationFrame( function() { self.mainLoop(); });
+    }
 }
-
 
 XLabsAnts.prototype.addAnt = function( x, y, vx, vy ) {
     var ant = new XLabsAnts.ant();

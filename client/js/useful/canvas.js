@@ -106,7 +106,7 @@ var Canvas = {
     Canvas.element.setAttribute( "style", "background:0; background-color: blue" );//window.innerHeight);
     Canvas.context = Canvas.element.getContext( "2d" );
 
-    // add these UI tools to the document:	
+    /*// add these UI tools to the document:	
     var style = document.createElement( 'style' ), // style - positions the canvas element and makes it 'click throughable' 
     rules = document.createTextNode('html,body{padding:0;margin:0;}#xLabsAppCanvas{pointer-events:none;top:0;left:0;position:fixed;z-index:500;}#xLabsAppCanvas.allow-pointer{pointer-events:auto;}');
     style.type = 'text/css';
@@ -119,7 +119,7 @@ var Canvas = {
     }
 
     var head = document.getElementsByTagName( 'head' )[0];
-    head.appendChild( style );
+    head.appendChild( style );*/
     $('#div_fs')[0].appendChild(Canvas.element);
 
     // add a painting callback for the canvas:
