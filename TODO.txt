@@ -1,3 +1,6 @@
+- respond appropriately when P accidentally exits fullscreen mode
+- display appropriate error when not using chrome or xlabs extension not present
+- respond appropriately when image doesn't load
 - display instructions to participants
 - incorporate training games into experiment html file
 - display slideshow of images
