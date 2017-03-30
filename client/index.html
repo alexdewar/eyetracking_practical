@@ -4,13 +4,13 @@
         <title>Eye tracking practical</title>
         <link rel='shortcut icon' href='img/favicon.ico' type='image/x-icon'>
         <meta charset='UTF-8'>
-        
+
         <style>
             /* fullscreen elements are initially hidden */
             .fullscreen {
                 display: none;
             }
-            
+
             #textbox {
                 position: absolute;
                 transform: translateY(-50%) translateX(-50%);
@@ -18,13 +18,13 @@
                 left: 50%;
                 width: 40%;
                 margin: 0px auto;
-                
+
                 text-align: center;
-                
+
                 border: dashed;
                 background-color: white;
             }
-            
+
             #canvas {
                 background-color: orange;
             }
@@ -32,30 +32,43 @@
 
         <!-- jQuery library -->
         <script src='js/jquery-3.2.0.min.js'></script>
-        
+
         <!-- main script -->
         <script>
             var IMG_COUNT = 3; // total number of images for image slides
             var ANTS_GAME_DURATION = 10; // seconds
             var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
-            
+
             var isfullscreen = false;
-            
-            var slides = [];
-            
+
+            var intro_slides = [
+                text_slide('<p>Welcome to the eye tracking practical.</p> ' +
+                        '<p>During this experiment, we will track the positions of your eyes using the webcam in front of you.</p> ' +
+                        '<p>You will first be given some instructions, then you will play a few games to calibrate the eye tracker, then you will perform some data collection.</p> ' +
+                        '<p>Click next to continue.</p>'),
+                text_slide('<p>For the webcam to get a good image, you should checck that there are no external sources of light. ' +
+                        'You should make sure that your hair is not in your face and if you wear glasses but have only a mild prescription, consider removing them (this is not essential).</p> ' +
+                        '<p>Most importantly, you should try to keep your head in the same position during both the calibration and testing phases of the experiment.</p>')
+            ];
+
+            var ants_slides = [
+                text_slide('This is the ant game'),
+                ants_start
+            ];
+
             var imgs = []; // array for preloaded images
-            
+
             var xlabs_started = false;
-            
+
             // preload images for image slides
             function preload_images(callback) {
                 var toload = IMG_COUNT;
-                
+
                 for (var i = 0; i < IMG_COUNT; i++) {
                     var img = new Image();
                     imgs.push(img);
 
-                    img.onload = function() {
+                    img.onload = function () {
                         if (--toload === 0) {
                             callback();
                         }
@@ -63,22 +76,22 @@
                     img.src = 'img/img' + i + '.jpg';
                 }
             }
-            
+
             function text_slide(text) {
-                return function() {
+                return function () {
                     Canvas.hide();
-                    
+
                     // change instruction text
                     $('#text')[0].innerHTML = text;
-                    
+
                     // make instruction textbox visible
                     $('#textbox').show();
                 };
             }
-            
+
             function img_slide(imgi) {
                 var img = imgs[imgi];
-                
+
                 // work out the size and position of image on canvas
                 var img_rat = img.width / img.height;
                 var canvas_rat = Canvas.element.width / Canvas.element.height;
@@ -93,39 +106,42 @@
                     var dest_left = (Canvas.element.width - dest_width) / 2;
                     var dest_top = 0;
                 }
-                
-                return function() {
+
+                return function () {
                     set_canvas_click(slide_next);
-                    
+
                     // hide text instructions
                     $('#textbox').hide();
-                    
+
                     // draw "slide" image on canvas
                     Canvas.clear();
                     Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
-                    
+
                     // make canvas visible
                     Canvas.show();
                 };
             }
-            
+
             function ants_start() {
                 console.log('starting ants game');
-                
+
                 $('#textbox').hide();
-                
+
                 Canvas.clear();
-                
+                Canvas.show();
+
                 setTimeout(function () {
                     ants.run_game = false;
                     slide_next();
                 }, ANTS_GAME_DURATION * 1000);
-                
-                set_canvas_click(function(e) { ants.onClick(e); });
+
+                set_canvas_click(function (e) {
+                    ants.onClick(e);
+                });
                 ants.run_game = true;
                 ants.mainLoop();
             }
-            
+
             function slide_prev() {
                 if (slidei > 0) {
                     slides[--slidei]();
@@ -139,19 +155,19 @@
                     document.webkitExitFullscreen();
                 }
             }
-            
+
             function xlabs_ready() {
                 console.log('xlabs ready');
-                
-                $(window).on('beforeunload', function() {
+
+                $(window).on('beforeunload', function () {
                     xLabs.setConfig('system.mode', 'off');
                 });
-                
+
                 //xLabs.setConfig('calibration.clear', '1');
                 xLabs.setConfig('system.mode', 'learning');
                 //xLabs.setConfig('browser.canvas.paintLearning', '0');
             }
-            
+
             function xlabs_update() {
                 var mode = xLabs.getConfig('system.mode');
                 if (!xlabs_started && mode !== 'off') {
@@ -161,34 +177,34 @@
                     ants.updateGaze();
                 }
             }
-            
+
             function on_xlabs_started() {
                 console.log('xlabs started');
-                
+
                 set_inittext("Welcome to the University of Sussex eye tracking practical! " +
-                    "Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.");
+                        "Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.");
             }
-            
+
             function set_inittext(text) {
                 $('#inittext')[0].innerHTML = text;
             }
-            
+
             function set_canvas_click(f) {
                 $('#xLabsAppCanvas').off('click').click(f);
             }
-            
+
             function on_images_preloaded() {
                 console.log('images preloaded');
 
                 // initialise set of "slides" for experiment
-                slides = [
-                    text_slide('Welcome to the University of Sussex eye tracking practical. Click next to continue.'),
-                    img_slide(0),
-                    ants_start,
-                    img_slide(1),
-                    img_slide(2),
-                    text_slide('Experiment completed! Thank you for taking part.')
-                ];
+                slides = intro_slides
+                        .concat(ants_slides)
+                        .concat([
+                            img_slide(0),
+                            img_slide(1),
+                            img_slide(2),
+                            text_slide('Experiment completed! Thank you for taking part.')
+                        ]);
 
                 // actions on entering/exiting fullscreen mode
                 $(document).on('webkitfullscreenchange', function () {
@@ -204,25 +220,25 @@
                         $('.fullscreen').hide(); // hide all the "fullscreen" elements
                     }
                 });
-                
+
                 console.log('loading resources for ants game');
                 ants = new XLabsAnts();
-                ants.init(function() {
+                ants.init(function () {
                     xLabs.setup(xlabs_ready, xlabs_update, null, XLABS_DEVELOPER_TOKEN);
                 });
             }
-            
+
             window.onload = function () {
                 if (xLabs.extensionVersion() === null) { // no xlabs or not running in chrome
                     set_inittext(
-                        "<h2>Error</h2>" +
-                        "This webpage must be viewed in Google Chrome " +
-                        "and <a href='https://chrome.google.com/webstore/detail/xlabs-headeyegaze-tracker/emeeadaoegehllidjmmokeaahobondco?hl=en'>the xLabs Chrome extension</a> must be installed."
-                        );
-                
+                            "<h2>Error</h2>" +
+                            "This webpage must be viewed in Google Chrome " +
+                            "and <a href='https://chrome.google.com/webstore/detail/xlabs-headeyegaze-tracker/emeeadaoegehllidjmmokeaahobondco?hl=en'>the xLabs Chrome extension</a> must be installed."
+                            );
+
                     return;
                 }
-                
+
                 preload_images(on_images_preloaded);
             };
 
@@ -235,7 +251,7 @@
         <p id='inittext'>
             Loading...
         </p>
-        
+
         <div id='div_fs'>
             <div class='fullscreen' id='textbox'>
                 <p id='text'></p>
@@ -246,10 +262,10 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- xlabs API -->
         <script src="js/xlabs.js"></script>
-        
+
         <!-- includes for ants demo -->
         <script src="js/useful/util.js"></script>
         <script src="js/useful/state.js"></script>
