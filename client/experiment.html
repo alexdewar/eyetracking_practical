@@ -4,28 +4,42 @@
         <title>Experiment</title>
         <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
         <style>
-            #canvas {
-                background-color: black;
+            #expt_canvas {
+                display: none;
+                background-color: orange;
             }
         </style>
+        <script src="js/jquery-3.2.0.min.js"></script>
         <script>
+            var isfullscreen = false;
+            
             window.onload = function () {
+                var canvas = $('#expt_canvas');
+                canvas[0].width = screen.width;
+                canvas[0].height = screen.height;
+                
                 // show/hide the canvas on entering/exiting fullscreen mode
-                canvas.addEventListener("webkitfullscreenchange", function () {
-                    canvas.style.display = window.innerHeight === screen.height ? 'block' : 'none';
+                $(document).on("webkitfullscreenchange", function () {
+                    isfullscreen = !isfullscreen;
+                    if (!isfullscreen) {
+                        canvas.hide();
+                        $('#text').show();
+                    } else {
+                        $('#text').hide();
+                        canvas.show();
+                    }
                 });
             };
 
             function goFullscreen() {
-                var canvas = document.getElementById('canvas');
-                canvas.webkitRequestFullscreen();
+                $('#expt_canvas')[0].webkitRequestFullscreen();
             }
         </script>
     </head>
     <body>
-        <p><a href="javascript:goFullscreen();">Click to begin the experiment.</a></p>
-        <canvas id="canvas" style='display: none;'></canvas>
+        <p id="text">Welcome to the University of Sussex eye tracking practical! Click <a href="#" onclick="goFullscreen();">here</a> to begin the experiment.</p>
+        <canvas id="expt_canvas"></canvas>
     </body>
 </html>
