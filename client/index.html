@@ -27,14 +27,27 @@
                 transform: translateY(-50%) translateX(-50%);
                 top: 50%;
                 left: 50%;
-                width: 40%;
                 margin: 0px auto;
+
+                width: 60%;
+                height: 60%;
 
                 font-size: xx-large;
                 text-align: center;
 
-                border: dashed;
+                border-radius: 25px;
+
                 background-color: lightblue;
+            }
+
+            #text {
+                vertical-align: middle;
+                padding: 30px;
+            }
+
+            #prev_next {
+                vertical-align: bottom;
+                padding: 30px;
             }
         </style>
 
@@ -271,14 +284,17 @@
         </p>
 
         <div id='div_fs'>
-            <div class='fullscreen' id='textbox'>
-                <p id='text'></p>
-
-                <div>
-                    <a href='#' onclick='slide_prev();'>Previous</a>
-                    | <a href='#' onclick='slide_next();'>Next</a>
-                </div>
-            </div>
+            <table class='fullscreen' id='textbox'>
+                <tr>
+                    <td id='text'></td>
+                </tr>
+                <tr>
+                    <td id='prev_next'>
+                        <a href='#' onclick='slide_prev();'>Previous</a>
+                        | <a href='#' onclick='slide_next();'>Next</a>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         <!-- xlabs API -->
