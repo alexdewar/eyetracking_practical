@@ -131,6 +131,7 @@
 
                     // draw "slide" image on canvas
                     Canvas.clear();
+                    $('#xLabsAppCanvas').css('background-color', 'black');
                     Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
 
                     set_canvas_click(slide_next);
@@ -146,6 +147,7 @@
                 $('#textbox').hide();
 
                 Canvas.clear();
+                $('#xLabsAppCanvas').css('background-color', 'white');
                 Canvas.show();
 
                 setTimeout(function () {
