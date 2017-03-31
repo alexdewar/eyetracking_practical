@@ -173,7 +173,9 @@
 
                 setTimeout(function () {
                     ants.run_game = false;
-                    slide_next();
+                    if (isfullscreen) {
+                        slide_next();
+                    }
                 }, ANTS_GAME_DURATION * 1000);
 
                 set_canvas_click(function (e) {
