@@ -79,7 +79,7 @@ var Balloons = {
         var updateInterval = 50;
         setInterval(Balloons.update, updateInterval);
 
-        var colours = "js/colours/colours_dark.json";
+        var colours = "js/xlabs_utils/colours_dark.json";
         Graph.setup("graph", colours, false);
 
         Gaze.xyLearningRate = 1.0; //0.8;
