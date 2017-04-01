@@ -75,7 +75,6 @@ var Graph = {
     svg: null,
     forceLayout: null,
     circles: null,
-    labels: null,
 
     // Font scaling functions
     calcFontSize: function (classValue) {
@@ -232,11 +231,8 @@ var Graph = {
                 }
             }
 
-            var fontSize = Graph.calcFontSize(classValue);
-            circles[ i ].setAttribute('r', radius);
-            circles[ i ].setAttribute('class', classValue);
-            var t = Graph.labels[0][ i ];
-            t.style[ "font-size" ] = fontSize + "px";
+            circles[i].setAttribute('r', radius);
+            circles[i].setAttribute('class', classValue);
         }
 
         Graph.forceLayout.start(); // restart the force due to new constraints
@@ -302,20 +298,6 @@ var Graph = {
 
         Graph.circles = circles;
 
-        // Draw the node labels first
-        var texts = Graph.svg.selectAll("text")
-                .data(nodes)
-                .enter()
-                .append("text")
-                .attr("fill", "black")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "10px")
-                .text(function (d) {
-                    return d.name;
-                });
-
-        Graph.labels = texts;
-
         // Run the Force effect
         Graph.forceLayout.on("tick", function () {
             edges.attr("x1", function (d) {
@@ -336,9 +318,6 @@ var Graph = {
                     .attr("cy", function (d) {
                         return d.y;
                     })
-            texts.attr("transform", function (d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
         }); // End tick func
     },
 
