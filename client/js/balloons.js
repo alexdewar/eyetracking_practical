@@ -24,8 +24,13 @@ var Balloons = {
     // Key events
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     start: function () {
-        xLabs.setConfig("system.mode", "learning"); // this also clears the memory buffer
-        document.getElementById("start").style.display = "none";
+        var updateInterval = 50;
+        setInterval(Balloons.update, updateInterval);
+
+        Graph.create(this.nodes);
+
+        Mouse.mouseUpCallback = Balloons.onMouseUp;
+
         Graph.show();
     },
 
@@ -44,7 +49,7 @@ var Balloons = {
         if (fractionClicked > 0.75) {
             xLabs.setConfig("system.mode", "off");
             document.getElementById("win").style.display = "block";
-            document.getElementById("graph").style.display = "none";
+            document.getElementById("balloons").style.display = "none";
             document.getElementById("about").style.display = "none";
             Balloons.complete = true;
             return;
@@ -64,33 +69,20 @@ var Balloons = {
         Graph.showCircleRandom(pInflateBalloon);
     },
 
-    // xLabs API
-    onXlabsReady: function () {
-    },
-    onXlabsState: function () {
-    },
+    // nodes for graph - added by AD
+    nodes: [],
 
     // Setup
-    setup: function () {
-        window.addEventListener("beforeunload", function () {
-            xLabs.setConfig("system.mode", "off");
-        });
-
-        var updateInterval = 50;
-        setInterval(Balloons.update, updateInterval);
-
+    setup: function (callback) {
         var colours = "js/xlabs_utils/colours_dark.json";
-        Graph.setup("graph", colours, false);
+        Graph.setup("balloons", colours, function (error, nodes) {
+            if (error)
+                throw error;
 
-        Gaze.xyLearningRate = 1.0; //0.8;
+            Balloons.nodes = nodes;
 
-        Mouse.mouseUpCallback = Balloons.onMouseUp;
-
-        document.getElementById("start").onclick = Balloons.start;
-
-        xLabs.setup(Balloons.onXlabsReady, Balloons.onXlabsState, null, "2bba2616-cf81-4078-85b9-ddd16749abcb");
+            callback();
+        });
     }
 
 };
-
-Balloons.setup();
