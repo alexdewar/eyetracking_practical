@@ -247,6 +247,7 @@
             function on_all_started(error) {
                 if (error)
                     throw error;
+
                 set_inittext("Welcome to the University of Sussex eye tracking practical! " +
                         "Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.");
             }
@@ -275,12 +276,14 @@
                 });
 
                 ants = new XLabsAnts();
+                /*ants.init(function ()
+                 {*/
                 queue()
                         //.defer(preload_images)
-                        //.defer(ants.init)
                         .defer(Balloons.setup)
                         .defer(xlabs_start)
                         .await(on_all_started);
+                //});
             };
 
             function go_fullscreen() {
