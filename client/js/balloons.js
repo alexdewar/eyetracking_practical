@@ -12,12 +12,14 @@ var Balloons = {
     // Mouse Listener
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     onMouseUp: function () {
-        var x = Mouse.xMouseScreen;
-        var y = Mouse.yMouseScreen;
+        if (!Balloons.complete) {
+            var x = Mouse.xMouseScreen;
+            var y = Mouse.yMouseScreen;
 
-        var doc = xLabs.scr2doc(x, y);
-        //console.log( "click@ "+doc.x+","+doc.y );
-        Graph.hideCircleAt(doc.x, doc.y, 1.0);
+            var doc = xLabs.scr2doc(x, y);
+            //console.log( "click@ "+doc.x+","+doc.y );
+            Graph.hideCircleAt(doc.x, doc.y, 1.0);
+        }
     },
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +38,7 @@ var Balloons = {
 
     update: function () {
 
-        if (Balloons.complete == true) {
+        if (Balloons.complete) {
             return;
         }
 
@@ -49,8 +51,9 @@ var Balloons = {
         if (fractionClicked > 0.75) {
             clearInterval(Balloons.interval_id);
             Balloons.complete = true;
-            console.log('you win!')
-            Balloons.onwin();
+
+            $('#balloons_win').show();
+            setTimeout(Balloons.onwin, 2000);
 
             return;
         }
