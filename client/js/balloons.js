@@ -65,7 +65,7 @@ var Balloons = {
         }
 
         // randomly restore balloons
-        var pInflateBalloon = 0.06;
+        var pInflateBalloon = 0.03;
         Graph.showCircleRandom(pInflateBalloon);
     },
 
