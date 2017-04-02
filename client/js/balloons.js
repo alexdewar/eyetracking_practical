@@ -25,7 +25,7 @@ var Balloons = {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     start: function () {
         var updateInterval = 50;
-        setInterval(Balloons.update, updateInterval);
+        this.interval_id = setInterval(Balloons.update, updateInterval);
 
         Graph.create(this.nodes);
 
@@ -47,11 +47,11 @@ var Balloons = {
 
         // console.log( "frac="+  fractionClicked  );
         if (fractionClicked > 0.75) {
-            xLabs.setConfig("system.mode", "off");
-            document.getElementById("win").style.display = "block";
-            document.getElementById("balloons").style.display = "none";
-            document.getElementById("about").style.display = "none";
+            clearInterval(Balloons.interval_id);
             Balloons.complete = true;
+            console.log('you win!')
+            Balloons.onwin();
+
             return;
         }
 
@@ -69,11 +69,10 @@ var Balloons = {
         Graph.showCircleRandom(pInflateBalloon);
     },
 
-    // nodes for graph - added by AD
-    nodes: [],
-
     // Setup
-    setup: function (callback) {
+    setup: function (onwin, callback) {
+        Balloons.onwin = onwin;
+
         var colours = "js/xlabs_utils/colours_dark.json";
         Graph.setup("balloons", colours, function (error, nodes) {
             if (error)

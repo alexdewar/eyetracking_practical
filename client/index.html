@@ -280,7 +280,7 @@
                  {*/
                 queue()
                         //.defer(preload_images)
-                        .defer(Balloons.setup)
+                        .defer(Balloons.setup, slide_next)
                         .defer(xlabs_start)
                         .await(on_all_started);
                 //});
