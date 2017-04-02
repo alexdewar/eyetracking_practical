@@ -11,15 +11,12 @@ var Balloons = {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Mouse Listener
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    onMouseUp: function () {
-        if (!Balloons.complete) {
-            var x = Mouse.xMouseScreen;
-            var y = Mouse.yMouseScreen;
+    onMouseUp: function (ev) {
+        var doc = xLabs.scr2doc(ev.screenX, ev.screenY);
 
-            var doc = xLabs.scr2doc(x, y);
-            //console.log( "click@ "+doc.x+","+doc.y );
-            Graph.hideCircleAt(doc.x, doc.y, 1.0);
-        }
+        //console.log( "click@ "+doc.x+","+doc.y );
+
+        Graph.hideCircleAt(doc.x, doc.y, 1.0);
     },
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,7 +28,7 @@ var Balloons = {
 
         Graph.create(this.nodes);
 
-        Mouse.mouseUpCallback = Balloons.onMouseUp;
+        $(document).mouseup(Balloons.onMouseUp);
 
         Graph.show();
     },
@@ -51,6 +48,8 @@ var Balloons = {
         if (fractionClicked > 0.75) {
             clearInterval(Balloons.interval_id);
             Balloons.complete = true;
+
+            $(document).off('mouseup');
 
             $('#balloons_win').show();
             setTimeout(Balloons.onwin, 2000);
