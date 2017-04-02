@@ -59,7 +59,9 @@ var Balloons = {
         Gaze.update();
         Graph.updateWithoutSelection();//Selection( screen.width * 0.5, screen.height * 0.5 );
 
+        Canvas.clear();
         if (Gaze.available == true) {
+            Gaze.paint();
             var doc = xLabs.scr2doc(Gaze.xMeasuredSmoothed, Gaze.yMeasuredSmoothed);
             Graph.hideCircleAt(doc.x, doc.y, 1.2);
         }

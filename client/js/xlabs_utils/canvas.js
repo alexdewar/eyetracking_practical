@@ -101,23 +101,9 @@ var Canvas = {
         Canvas.element.setAttribute("class", "fullscreen");
         Canvas.element.setAttribute("width", screen.width);//window.innerWidth);
         Canvas.element.setAttribute("height", screen.height);//window.innerHeight);
-        Canvas.element.setAttribute("style", "background:0");//window.innerHeight);
+        Canvas.element.setAttribute("style", "background:0;position:absolute;z-index:1");//window.innerHeight);
         Canvas.context = Canvas.element.getContext("2d");
 
-        /*// add these UI tools to the document:
-         var style = document.createElement( 'style' ), // style - positions the canvas element and makes it 'click throughable'
-         rules = document.createTextNode('html,body{padding:0;margin:0;}#xLabsAppCanvas{pointer-events:none;top:0;left:0;position:fixed;z-index:500;}#xLabsAppCanvas.allow-pointer{pointer-events:auto;}');
-         style.type = 'text/css';
-
-         if( style.styleSheet ) {
-         style.styleSheet.cssText = rules.nodeValue;
-         }
-         else {
-         style.appendChild( rules );
-         }
-
-         var head = document.getElementsByTagName( 'head' )[0];
-         head.appendChild( style );*/
         $('#div_fs')[0].appendChild(Canvas.element);
 
         // add a painting callback for the canvas:

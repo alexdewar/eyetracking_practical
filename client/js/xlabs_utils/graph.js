@@ -327,7 +327,7 @@ var Graph = {
         var parent = d3.select("#" + parentId);
         Graph.svg = parent
                 .append("svg")
-                .attr("style", "position:absolute;left:0;top:0;display:none;margin:auto") // centered
+                .attr("style", "position:absolute;z-index:0;left:0;top:0;display:none;margin:auto") // centered
                 .attr("height", screen.height)
                 .attr("width", screen.width)
                 .attr("id", Graph.id);
