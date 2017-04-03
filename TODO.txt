@@ -1,5 +1,4 @@
 client:
-- incorporate balloon game into experiment html file
 - add another image (or something) to check if calibration is working
 - show P webcam output before calibration games begin
 - find free CSS template to use
