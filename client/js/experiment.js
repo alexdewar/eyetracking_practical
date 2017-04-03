@@ -1,8 +1,14 @@
-var IMG_COUNT = 3; // total number of images for image slides
 var ANTS_GAME_DURATION = 180; // seconds
 var IMG_DURATION = 30; // seconds
+
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 var KEYPRESS_SKIP = true;
+
+var IMG_FILES = [
+    'yarbus',
+    'changeblindness1',
+    'changeblindness2'
+];
 
 var isfullscreen = false;
 
@@ -40,9 +46,9 @@ var ants_slides = [
 var img_slides = [
     text_slide('<p>This is now the testing phase of the experiment.</p>' +
             '<p>You will be presented with a series of images...</p>'),
-    img_slide(0),
-    img_slide(1),
-    img_slide(2),
+    img_slide('yarbus'),
+    img_slide('changeblindness1'),
+    img_slide('changeblindness2'),
 ];
 
 // initialise set of "slides" for experiment
@@ -60,9 +66,9 @@ var xlabs_started = false;
 
 // preload images for image slides
 function preload_images(callback) {
-    var toload = IMG_COUNT;
+    var toload = IMG_FILES.length;
 
-    for (var i = 0; i < IMG_COUNT; i++) {
+    for (var i in IMG_FILES) {
         var img = new Image();
         imgs.push(img);
 
@@ -71,7 +77,7 @@ function preload_images(callback) {
                 callback();
             }
         };
-        img.src = 'img/img' + i + '.jpg';
+        img.src = 'img/' + IMG_FILES[i] + '.jpg';
     }
 }
 
@@ -89,10 +95,10 @@ function text_slide(text) {
     };
 }
 
-function img_slide(imgi) {
+function img_slide(imfile) {
     return {
         onstart: function () {
-            var img = imgs[imgi];
+            var img = imgs[IMG_FILES.indexOf(imfile)];
 
             // work out the size and position of image on canvas
             var img_rat = img.width / img.height;
