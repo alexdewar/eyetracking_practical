@@ -11,6 +11,8 @@ var IMG_FILES = [
 ];
 
 var isfullscreen = false;
+var testphase = false;
+var eyedata = [];
 
 // different sets of slides for experiment
 var intro_slides = [
@@ -46,6 +48,14 @@ var ants_slides = [
 var img_slides = [
     text_slide('<p>This is now the testing phase of the experiment.</p>' +
             '<p>You will be presented with a series of images...</p>'),
+    {
+        onstart: function () {
+            testphase = true;
+            teststarttime = performance.now();
+
+            slide_next();
+        }
+    },
     img_slide('yarbus'),
     img_slide('changeblindness1'),
     img_slide('changeblindness2'),
@@ -124,6 +134,12 @@ function img_slide(imfile) {
 
             // start timer
             img_timeout = setTimeout(slide_next, IMG_DURATION * 1000);
+
+            eyedata.push({
+                t: expt_time(),
+                type: 'trial',
+                trial: imfile
+            });
 
             // make canvas visible
             Canvas.show();
@@ -220,10 +236,23 @@ function on_xlabs_update() {
         xlabs_started = true;
         console.log('xlabs started');
         xlabs_start_callback();
-    } else if (mode === 'learning') {
+    } else if (mode === 'learning' && xLabs.getConfig('state.trackingSuspended') === '0') {
         if (ants.run_game)
             ants.updateGaze();
+        else if (testphase) {
+            eyedata.push({
+                t: expt_time(),
+                type: 'rec',
+                x: parseFloat(xLabs.getConfig('state.gaze.estimate.x')),
+                y: parseFloat(xLabs.getConfig('state.gaze.estimate.y')),
+                conf: parseInt(xLabs.getConfig('state.calibration.confidence'))
+            });
+        }
     }
+}
+
+function expt_time() {
+    return performance.now() - teststarttime;
 }
 
 function set_inittext(text) {
@@ -265,6 +294,15 @@ window.onload = function () {
 
             if (slides[slidei].onend)
                 slides[slidei].onend();
+
+            if (testphase) {
+                eyedata.push({
+                    t: expt_time(),
+                    type: 'end'
+                })
+            }
+            console.log('eye data:');
+            console.log(eyedata);
 
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
         }
