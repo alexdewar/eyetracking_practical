@@ -20,14 +20,20 @@ var balloons_slides = [
             'The eye tracker should learn where you are looking and after a while, your gaze should be visible on the screen as a red circle. ' +
             'You can also pop balloons by looking at them.</p>' +
             '<p>Click next to begin.</p>'),
-    balloons_start
+    {
+        onstart: balloons_start,
+        onend: balloons_end
+    }
 ]
 var ants_slides = [
     text_slide('<p>You will now play another game.</p>' +
             '<p>The aim this time is to squash ants by clicking on them with the mouse. ' +
             'As before, if the system is calibrated correctly you should be able to squash them by looking at them.</p>' +
             '<p>Click next to begin.</p>'),
-    ants_start
+    {
+        onstart: ants_start,
+        onend: ants_end
+    }
 ];
 var img_slides = [
     text_slide('<p>This is now the testing phase of the experiment.</p>' +
@@ -68,46 +74,50 @@ function preload_images(callback) {
 }
 
 function text_slide(text) {
-    return function () {
-        $('.fullscreen').hide();
+    return {
+        onstart: function () {
+            $('.fullscreen').hide();
 
-        // change instruction text
-        $('#text')[0].innerHTML = text;
+            // change instruction text
+            $('#text')[0].innerHTML = text;
 
-        // make instruction textbox visible
-        $('#textbox').show();
+            // make instruction textbox visible
+            $('#textbox').show();
+        }
     };
 }
 
 function img_slide(imgi) {
-    return function () {
-        var img = imgs[imgi];
+    return {
+        onstart: function () {
+            var img = imgs[imgi];
 
-        // work out the size and position of image on canvas
-        var img_rat = img.width / img.height;
-        var canvas_rat = Canvas.element.width / Canvas.element.height;
-        if (img_rat > canvas_rat) { // image is *relatively* wider than screen
-            var dest_width = Canvas.element.width;
-            var dest_height = dest_width / img_rat;
-            var dest_left = 0;
-            var dest_top = (Canvas.element.height - dest_height) / 2;
-        } else { // image is relatively taller than screen
-            var dest_height = Canvas.element.height;
-            var dest_width = dest_height * img_rat;
-            var dest_left = (Canvas.element.width - dest_width) / 2;
-            var dest_top = 0;
+            // work out the size and position of image on canvas
+            var img_rat = img.width / img.height;
+            var canvas_rat = Canvas.element.width / Canvas.element.height;
+            if (img_rat > canvas_rat) { // image is *relatively* wider than screen
+                var dest_width = Canvas.element.width;
+                var dest_height = dest_width / img_rat;
+                var dest_left = 0;
+                var dest_top = (Canvas.element.height - dest_height) / 2;
+            } else { // image is relatively taller than screen
+                var dest_height = Canvas.element.height;
+                var dest_width = dest_height * img_rat;
+                var dest_left = (Canvas.element.width - dest_width) / 2;
+                var dest_top = 0;
+            }
+
+            $('.fullscreen').hide();
+
+            // draw "slide" image on canvas
+            Canvas.clear();
+            $('#xLabsAppCanvas').css('background-color', 'black');
+            Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
+            set_canvas_click(slide_next);
+
+            // make canvas visible
+            Canvas.show();
         }
-
-        $('.fullscreen').hide();
-
-        // draw "slide" image on canvas
-        Canvas.clear();
-        $('#xLabsAppCanvas').css('background-color', 'black');
-        Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
-        set_canvas_click(slide_next);
-
-        // make canvas visible
-        Canvas.show();
     };
 }
 
@@ -120,7 +130,7 @@ function ants_start() {
     $('#xLabsAppCanvas').css('background-color', 'white');
     Canvas.show();
 
-    setTimeout(function () {
+    ants_timeout = setTimeout(function () {
         ants.run_game = false;
         if (isfullscreen) {
             slide_next();
@@ -135,6 +145,11 @@ function ants_start() {
     ants.mainLoop();
 }
 
+function ants_end() {
+    clearTimeout(ants_timeout);
+    ants.run_game = false;
+}
+
 function balloons_start() {
     console.log('starting balloons game')
 
@@ -145,15 +160,27 @@ function balloons_start() {
     Balloons.start();
 }
 
+function balloons_end() {
+    Balloons.stop();
+}
+
 function slide_prev() {
     if (slidei > 0) {
-        slides[--slidei]();
+        if (slides[slidei].onend)
+            slides[slidei].onend();
+
+        slides[--slidei].onstart();
     }
 }
 
 function slide_next() {
     if (slidei < slides.length - 1) {
-        slides[++slidei]();
+        if (slidei > 0 && slides[slidei].onend)
+            slides[slidei].onend();
+
+        console.log(slides[++slidei])
+
+        slides[slidei].onstart();
     } else {
         document.webkitExitFullscreen();
     }
@@ -218,10 +245,15 @@ window.onload = function () {
         isfullscreen = !isfullscreen;
         if (isfullscreen) {
             console.log('entering fullscreen mode');
+
             slidei = 0; // reset slide counter (start from beginning)
-            slides[0](); // show first slide
+            slides[0].onstart(); // show first slide
         } else {
             console.log('exiting fullscreen mode');
+
+            if (slides[slidei].onend)
+                slides[slidei].onend();
+
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
         }
     });

@@ -46,10 +46,7 @@ var Balloons = {
 
         // console.log( "frac="+  fractionClicked  );
         if (fractionClicked > 0.75) {
-            clearInterval(Balloons.interval_id);
-            Balloons.complete = true;
-
-            $(document).off('mouseup');
+            Balloons.stop();
 
             $('#balloons_win').show();
             setTimeout(Balloons.onwin, 2000);
@@ -71,6 +68,12 @@ var Balloons = {
         // randomly restore balloons
         var pInflateBalloon = 0.03;
         Graph.showCircleRandom(pInflateBalloon);
+    },
+
+    stop: function () {
+        clearInterval(Balloons.interval_id);
+        Balloons.complete = true;
+        $(document).off('mouseup');
     },
 
     // Setup
