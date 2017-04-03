@@ -12,7 +12,6 @@ var IMG_FILES = [
 
 var isfullscreen = false;
 var testphase = false;
-var eyedata = [];
 
 // different sets of slides for experiment
 var intro_slides = [
@@ -73,6 +72,22 @@ var slides = intro_slides
 var imgs = []; // array for preloaded images
 
 var xlabs_started = false;
+
+var participant;
+class Participant {
+    constructor(id, code) {
+        this.id = id;
+        this.code = code;
+        this.eye_data = [];
+    }
+
+    static create(callback) {
+        $.getJSON('http://users.sussex.ac.uk/~ad374/eyetracking/api/get_participant_id.php', function (json) {
+            participant = new Participant(json.id, json.code);
+            callback();
+        });
+    }
+}
 
 // preload images for image slides
 function preload_images(callback) {
@@ -135,7 +150,7 @@ function img_slide(imfile) {
             // start timer
             img_timeout = setTimeout(slide_next, IMG_DURATION * 1000);
 
-            eyedata.push({
+            participant.eye_data.push({
                 t: expt_time(),
                 type: 'trial',
                 trial: imfile
@@ -240,7 +255,7 @@ function on_xlabs_update() {
         if (ants.run_game)
             ants.updateGaze();
         else if (testphase) {
-            eyedata.push({
+            participant.eye_data.push({
                 t: expt_time(),
                 type: 'rec',
                 x: parseFloat(xLabs.getConfig('state.gaze.estimate.x')),
@@ -267,8 +282,9 @@ function on_all_started(error) {
     if (error)
         throw error;
 
-    set_inittext("Welcome to the University of Sussex eye tracking practical! " +
-            "Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.");
+    set_inittext("<p>Welcome to the eye tracking practical! " +
+            "You are participant number " + participant.id + ".</p>" +
+            "<p>Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.</p>");
 }
 
 window.onload = function () {
@@ -296,13 +312,13 @@ window.onload = function () {
                 slides[slidei].onend();
 
             if (testphase) {
-                eyedata.push({
+                participant.eye_data.push({
                     t: expt_time(),
                     type: 'end'
                 })
             }
             console.log('eye data:');
-            console.log(eyedata);
+            console.log(participant.eye_data);
 
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
         }
@@ -319,6 +335,7 @@ window.onload = function () {
     ants.init(function ()
     {
         queue()
+                .defer(Participant.create)
                 .defer(preload_images)
                 .defer(Balloons.setup, slide_next)
                 .defer(xlabs_start)
