@@ -4,6 +4,8 @@ var IMG_DURATION = 30; // seconds
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 var KEYPRESS_SKIP = true;
 
+var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking'
+
 var IMG_FILES = [
     'yarbus',
     'changeblindness1',
@@ -81,8 +83,14 @@ class Participant {
         this.eye_data = [];
     }
 
+    submit_eye_data(callback) {
+        $.post(REMOTE_URL + '/api/submit_eye_data.php',
+                {data: JSON.stringify({id: this.id, code: this.code, eye_data: this.eye_data})},
+                callback);
+    }
+
     static create(callback) {
-        $.getJSON('http://users.sussex.ac.uk/~ad374/eyetracking/api/get_participant_id.php', function (json) {
+        $.getJSON(REMOTE_URL + '/api/get_participant_id.php', function (json) {
             participant = new Participant(json.id, json.code);
             callback();
         });
@@ -226,6 +234,11 @@ function slide_next() {
         slides[++slidei].onstart();
     } else {
         document.webkitExitFullscreen();
+
+        console.log('sending data to server...');
+        participant.submit_eye_data(function (data) {
+            console.log('response from server: ' + data.status);
+        })
     }
 }
 
@@ -240,7 +253,7 @@ function on_xlabs_ready() {
         xLabs.setConfig('system.mode', 'off');
     });
 
-    xLabs.setConfig('calibration.clear', '1');
+    //xLabs.setConfig('calibration.clear', '1');
     xLabs.setConfig('system.mode', 'learning');
     xLabs.setConfig('browser.canvas.paintLearning', '0');
 }
