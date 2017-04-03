@@ -18,7 +18,7 @@ else:
 
 # start the google chrome process
 print('Starting Google Chrome...')
-url = 'http://localhost:%d/client.html' % LISTEN_PORT;
+url = 'http://localhost:%d/experiment.html' % LISTEN_PORT;
 if sys.platform.startswith('linux'):
     subprocess.Popen(['google-chrome-stable', url])
 elif sys.platform == 'win32':
