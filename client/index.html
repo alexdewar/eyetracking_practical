@@ -71,7 +71,7 @@
         <!-- main script -->
         <script>
             var IMG_COUNT = 3; // total number of images for image slides
-            var ANTS_GAME_DURATION = 10; // seconds
+            var ANTS_GAME_DURATION = 180; // seconds
             var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 
             var isfullscreen = false;
@@ -110,13 +110,14 @@
             ];
 
             // initialise set of "slides" for experiment
-            /*var slides = intro_slides
-             .concat(ants_slides)
-             .concat(img_slides)
-             .concat([
-             text_slide('Experiment completed! Thank you for taking part.')
-             ]);*/
-            var slides = balloons_slides;
+            var slides = intro_slides
+                    .concat(balloons_slides)
+                    .concat(ants_slides)
+                    .concat(img_slides)
+                    .concat([
+                        text_slide('Experiment completed! Thank you for taking part.')
+                    ]);
+
             var imgs = []; // array for preloaded images
 
             var xlabs_started = false;
@@ -240,6 +241,7 @@
                 $(window).on('beforeunload', function () {
                     xLabs.setConfig('system.mode', 'off');
                 });
+
                 xLabs.setConfig('calibration.clear', '1');
                 xLabs.setConfig('system.mode', 'learning');
                 xLabs.setConfig('browser.canvas.paintLearning', '0');
@@ -297,14 +299,14 @@
                 });
 
                 ants = new XLabsAnts();
-                /*ants.init(function ()
-                 {*/
-                queue()
-                        //.defer(preload_images)
-                        .defer(Balloons.setup, slide_next)
-                        .defer(xlabs_start)
-                        .await(on_all_started);
-                //});
+                ants.init(function ()
+                {
+                    queue()
+                            .defer(preload_images)
+                            .defer(Balloons.setup, slide_next)
+                            .defer(xlabs_start)
+                            .await(on_all_started);
+                });
             };
 
             function go_fullscreen() {
