@@ -1,6 +1,7 @@
 var IMG_COUNT = 3; // total number of images for image slides
 var ANTS_GAME_DURATION = 180; // seconds
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
+var KEYPRESS_SKIP = true;
 
 var isfullscreen = false;
 
@@ -178,9 +179,7 @@ function slide_next() {
         if (slidei > 0 && slides[slidei].onend)
             slides[slidei].onend();
 
-        console.log(slides[++slidei])
-
-        slides[slidei].onstart();
+        slides[++slidei].onstart();
     } else {
         document.webkitExitFullscreen();
     }
@@ -257,6 +256,13 @@ window.onload = function () {
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
         }
     });
+
+    if (KEYPRESS_SKIP) {
+        $(document).keypress(function (ev) {
+            if (ev.key === ' ')
+                slide_next();
+        });
+    }
 
     ants = new XLabsAnts();
     ants.init(function ()
