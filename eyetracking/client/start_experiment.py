@@ -22,7 +22,11 @@ url = 'http://localhost:%d/experiment.html' % LISTEN_PORT;
 if sys.platform.startswith('linux'):
     subprocess.Popen(['google-chrome-stable', url])
 elif sys.platform == 'win32':
-    subprocess.Popen(['C:\Program Files (x86)\Google\Chrome\Application\chrome.exe', url])
+    chrome_exe = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    if os.path.isfile(chrome_exe):
+        subprocess.Popen([chrome_exe, url])
+    else:
+        subprocess.Popen([os.path.join(os.environ['LOCALAPPDATA'], 'Google\\Chrome\\Application\\chrome.exe'), url])
 
 # change current directory to the directory this script is in
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
