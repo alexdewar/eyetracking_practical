@@ -1,5 +1,6 @@
 var IMG_COUNT = 3; // total number of images for image slides
 var ANTS_GAME_DURATION = 180; // seconds
+var IMG_DURATION = 30; // seconds
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 var KEYPRESS_SKIP = true;
 
@@ -114,10 +115,16 @@ function img_slide(imgi) {
             Canvas.clear();
             $('#xLabsAppCanvas').css('background-color', 'black');
             Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
-            set_canvas_click(slide_next);
+
+            // start timer
+            img_timeout = setTimeout(slide_next, IMG_DURATION * 1000);
 
             // make canvas visible
             Canvas.show();
+        },
+
+        onstop: function () {
+            clearTimeout(img_timeout)
         }
     };
 }
