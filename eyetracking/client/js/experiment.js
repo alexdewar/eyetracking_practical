@@ -1,10 +1,15 @@
+var DEBUG = true;
+
+var SESSION_ID = DEBUG ? 0 : 1;
+console.log('SESSION ID: ' + SESSION_ID);
+
+var KEYPRESS_SKIP = DEBUG;
+
 var ANTS_GAME_DURATION = 180; // seconds
 var IMG_DURATION = 30; // seconds
 
-var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
-var KEYPRESS_SKIP = true;
-
 var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking'
+var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 
 var IMG_FILES = [
     'yarbus',
@@ -91,28 +96,27 @@ function check_start() {
 }
 
 function check_end() {
-    console.log('ENDING')
     Check.stop();
     $('#xlabs_check').hide();
 }
 
 var participant;
 class Participant {
-    constructor(id, code) {
-        this.id = id;
+    constructor(pid, code) {
+        this.pid = pid;
         this.code = code;
         this.eye_data = [];
     }
 
     submit_eye_data(callback) {
         $.post(REMOTE_URL + '/api/submit_eye_data.php',
-                {data: JSON.stringify({id: this.id, code: this.code, eye_data: this.eye_data})},
+                {data: JSON.stringify({sid: SESSION_ID, pid: this.pid, code: this.code, eye_data: this.eye_data})},
                 callback);
     }
 
     static create(callback) {
-        $.getJSON(REMOTE_URL + '/api/get_participant_id.php', function (json) {
-            participant = new Participant(json.id, json.code);
+        $.getJSON(REMOTE_URL + '/api/get_participant_id.php?sid=' + SESSION_ID, function (json) {
+            participant = new Participant(json.pid, json.code);
             callback();
         });
     }
@@ -259,7 +263,7 @@ function slide_next() {
         console.log('sending data to server...');
         participant.submit_eye_data(function (data) {
             console.log('response from server: ' + data.status);
-        })
+        });
     }
 }
 
@@ -320,7 +324,7 @@ function on_all_started(error) {
         throw error;
 
     set_inittext("<p>Welcome to the eye tracking practical! " +
-            "You are participant number " + participant.id + ".</p>" +
+            "You are participant number " + participant.pid + ".</p>" +
             "<p>Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.</p>");
 }
 
