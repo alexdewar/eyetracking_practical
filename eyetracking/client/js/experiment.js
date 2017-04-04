@@ -17,6 +17,9 @@ var IMG_FILES = [
     'changeblindness2'
 ];
 
+var imgs = []; // array for preloaded images
+var stimuli = [];
+
 var isfullscreen = false;
 var testphase = false;
 
@@ -110,7 +113,7 @@ class Participant {
 
     submit_eye_data(callback) {
         $.post(REMOTE_URL + '/api/submit_eye_data.php',
-                {data: JSON.stringify({sid: SESSION_ID, pid: this.pid, code: this.code, eye_data: this.eye_data})},
+                {data: JSON.stringify({sid: SESSION_ID, pid: this.pid, code: this.code, stimuli: stimuli, eye_data: this.eye_data})},
                 callback);
     }
 
@@ -127,15 +130,17 @@ function preload_images(callback) {
     var toload = IMG_FILES.length;
 
     for (var i in IMG_FILES) {
+        var fn = IMG_FILES[i];
+
         var img = new Image();
-        imgs.push(img);
+        imgs[fn] = img;
 
         img.onload = function () {
             if (--toload === 0) {
                 callback();
             }
         };
-        img.src = 'img/' + IMG_FILES[i] + '.jpg';
+        img.src = 'img/' + fn + '.jpg';
     }
 }
 
@@ -153,32 +158,19 @@ function text_slide(text) {
     };
 }
 
-function img_slide(imfile) {
+function img_slide(fn) {
     return {
         onstart: function () {
-            var img = imgs[IMG_FILES.indexOf(imfile)];
-
-            // work out the size and position of image on canvas
-            var img_rat = img.width / img.height;
-            var canvas_rat = Canvas.element.width / Canvas.element.height;
-            if (img_rat > canvas_rat) { // image is *relatively* wider than screen
-                var dest_width = Canvas.element.width;
-                var dest_height = dest_width / img_rat;
-                var dest_left = 0;
-                var dest_top = (Canvas.element.height - dest_height) / 2;
-            } else { // image is relatively taller than screen
-                var dest_height = Canvas.element.height;
-                var dest_width = dest_height * img_rat;
-                var dest_left = (Canvas.element.width - dest_width) / 2;
-                var dest_top = 0;
-            }
-
             $('.fullscreen').hide();
+
+            var img = imgs[fn];
+
+            var dest = stimuli[IMG_FILES.indexOf(fn)].dest;
 
             // draw "slide" image on canvas
             Canvas.clear();
             $('#xLabsAppCanvas').css('background-color', 'black');
-            Canvas.context.drawImage(img, dest_left, dest_top, dest_width, dest_height);
+            Canvas.context.drawImage(img, dest.left, dest.top, dest.width, dest.height);
 
             // start timer
             img_timeout = setTimeout(slide_next, IMG_DURATION * 1000);
@@ -186,7 +178,7 @@ function img_slide(imfile) {
             participant.eye_data.push({
                 t: expt_time(),
                 type: 'trial',
-                trial: imfile
+                trial: fn
             });
 
             // make canvas visible
@@ -323,6 +315,35 @@ function on_all_started(error) {
     if (error)
         throw error;
 
+    for (var i in IMG_FILES) {
+        var fn = IMG_FILES[i];
+        img = imgs[fn];
+
+        // work out the size and position of image on canvas
+        var img_rat = img.width / img.height;
+        var canvas_rat = Canvas.element.width / Canvas.element.height;
+        if (img_rat > canvas_rat) { // image is *relatively* wider than screen
+            var dest = {
+                width: Canvas.element.width,
+                height: Math.round(Canvas.element.width / img_rat),
+                left: 0
+            };
+            dest.top = Math.round((Canvas.element.height - dest.height) / 2);
+        } else { // image is relatively taller than screen
+            var dest = {
+                width: Math.round(Canvas.element.height * img_rat),
+                height: Canvas.element.height,
+                top: 0
+            };
+            dest.left = Math.round((Canvas.element.width - dest.width) / 2);
+        }
+
+        stimuli.push({
+            name: fn,
+            src: {width: img.width, height: img.height},
+            dest: dest
+        });
+    }
     set_inittext("<p>Welcome to the eye tracking practical! " +
             "You are participant number " + participant.pid + ".</p>" +
             "<p>Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.</p>");
