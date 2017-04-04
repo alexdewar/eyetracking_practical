@@ -1,8 +1,8 @@
-- "session num" or similar to group participants together
 - "serverise" content
 - suppress PHP error messages on server (mucks up json!)
 
 client:
+- big reset button (for new participant)
 - slide to show progress of data submission to server
 - text instructions for image slides
 - set timeout for server response to participant id request
