@@ -234,6 +234,8 @@ function slide_next() {
         slides[++slidei].onstart();
     } else {
         document.webkitExitFullscreen();
+        
+        $(document).off('keypress');
 
         console.log('sending data to server...');
         participant.submit_eye_data(function (data) {
