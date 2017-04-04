@@ -1,16 +1,29 @@
+- "session num" or similar to group participants together
+- "serverise" content
+- suppress PHP error messages on server (mucks up json!)
+
 client:
-- add another image (or something) to check if calibration is working
-- show P webcam output before calibration games begin
-- find free CSS template to use
+- slide to show progress of data submission to server
+- text instructions for image slides
+- set timeout for server response to participant id request
+- assign Ps to experimental group for yarbus task, and display appropriate instructions
+- find higher res version of yarbus image
+- find better change blindness images ("easy" and "hard")
+- let Ps indicate when they notice a change for the change blindness tasks
+- better initial text display for page
+- fix fuzzy text in check slide
+- better next/prev buttons for textbox
+- show P own results
 
 server:
-- assign participants unique ID codes
-- log participants' results in memory
-- upload results to server
-- some way for Ps to retrieve their results from server
-- some way of collating the data on the server (with fig, as bonus)
+- script to delete participant data files
+- collate data on server (excluding dud participants)
+- show summary stats for participants
+- show figure representing the stats
+- convert results to CSV so Ps can download them
 
 error handling:
 - P accidentally exits fullscreen mode
 - P starts fullscreen mode manually (not by clicking on button)
-- image doesn't load
+- resources don't load
+- xlabs doesn't start
