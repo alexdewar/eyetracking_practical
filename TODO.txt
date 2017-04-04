@@ -7,7 +7,6 @@ client:
 - text instructions for image slides
 - set timeout for server response to participant id request
 - assign Ps to experimental group for yarbus task, and display appropriate instructions
-- find higher res version of yarbus image
 - find better change blindness images ("easy" and "hard")
 - let Ps indicate when they notice a change for the change blindness tasks
 - better initial text display for page
