@@ -140,7 +140,7 @@ function preload_images(callback) {
                 callback();
             }
         };
-        img.src = 'img/' + fn + '.jpg';
+        img.src = REMOTE_URL + '/img/' + fn + '.jpg';
     }
 }
 
