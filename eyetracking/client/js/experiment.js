@@ -25,6 +25,13 @@ var intro_slides = [
             'You should make sure that your hair is not in your face and if you wear glasses but have only a mild prescription, consider removing them (this is not essential).</p> ' +
             '<p>Most importantly, you should try to keep your head in the same position during both the calibration and testing phases of the experiment.</p>')
 ];
+var check_slides = [
+    text_slide('we will now check the webcam...'),
+    {
+        onstart: check_start,
+        onend: check_end
+    }
+]
 var balloons_slides = [
     text_slide('<p>First you will play a game to calibrate the eye tracker.</p>' +
             '<p>The aim is to pop balloons by clicking on them. ' +
@@ -63,17 +70,31 @@ var img_slides = [
 ];
 
 // initialise set of "slides" for experiment
-var slides = intro_slides
+/*var slides = intro_slides
         .concat(balloons_slides)
         .concat(ants_slides)
         .concat(img_slides)
         .concat([
             text_slide('Experiment completed! Thank you for taking part.')
-        ]);
+        ]);*/
+var slides = check_slides;
 
 var imgs = []; // array for preloaded images
 
 var xlabs_started = false;
+
+function check_start() {
+    $('.fullscreen').hide();
+
+    Check.start();
+    $('#xlabs_check').show();
+}
+
+function check_end() {
+    console.log('ENDING')
+    Check.stop();
+    $('#xlabs_check').hide();
+}
 
 var participant;
 class Participant {
@@ -234,7 +255,7 @@ function slide_next() {
         slides[++slidei].onstart();
     } else {
         document.webkitExitFullscreen();
-        
+
         $(document).off('keypress');
 
         console.log('sending data to server...');
@@ -254,6 +275,8 @@ function on_xlabs_ready() {
     $(window).on('beforeunload', function () {
         xLabs.setConfig('system.mode', 'off');
     });
+    
+    Check.onXlabsReady();
 
     //xLabs.setConfig('calibration.clear', '1');
     xLabs.setConfig('system.mode', 'learning');
@@ -266,10 +289,10 @@ function on_xlabs_update() {
         xlabs_started = true;
         console.log('xlabs started');
         xlabs_start_callback();
-    } else if (mode === 'learning' && xLabs.getConfig('state.trackingSuspended') === '0') {
+    } else if (mode === 'learning') {
         if (ants.run_game)
             ants.updateGaze();
-        else if (testphase) {
+        else if (testphase)
             participant.eye_data.push({
                 t: expt_time(),
                 type: 'rec',
@@ -277,7 +300,8 @@ function on_xlabs_update() {
                 y: parseFloat(xLabs.getConfig('state.gaze.estimate.y')),
                 conf: parseInt(xLabs.getConfig('state.calibration.confidence'))
             });
-        }
+        else if (Check.running)
+            Check.onXlabsState();
     }
 }
 
@@ -345,6 +369,19 @@ window.onload = function () {
                 slide_next();
         });
     }
+
+    // add event listeners
+    document.addEventListener("xLabsApiReady", function () {
+        xLabs.onApiReady();
+    });
+
+    document.addEventListener("xLabsApiState", function (event) {
+        xLabs.onApiState(event.detail);
+    });
+
+    document.addEventListener("xLabsApiIdPath", function (event) {
+        xLabs.onApiIdPath(event.detail);
+    });
 
     ants = new XLabsAnts();
     ants.init(function ()

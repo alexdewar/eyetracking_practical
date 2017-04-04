@@ -17,7 +17,7 @@ var Camera = {
     document.getElementById( "debugContainer2" ).style.display="none";
     document.getElementById( "video" ).style.display="none";
     document.getElementById( "debug" ).style.display="none";
-    allowCamera.hide() // It'll call hide when the camera is allowed anyway.
+    Camera.allowCamera.hide() // It'll call hide when the camera is allowed anyway.
   }
 
 
