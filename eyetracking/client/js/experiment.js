@@ -26,7 +26,7 @@ var intro_slides = [
             '<p>Most importantly, you should try to keep your head in the same position during both the calibration and testing phases of the experiment.</p>')
 ];
 var check_slides = [
-    text_slide('we will now check the webcam...'),
+    text_slide('<p>You will now be shown the output of the webcam in order to help you position yourself correctly relative to the webcam.</p>'),
     {
         onstart: check_start,
         onend: check_end
@@ -70,14 +70,14 @@ var img_slides = [
 ];
 
 // initialise set of "slides" for experiment
-/*var slides = intro_slides
+var slides = intro_slides
+        .concat(check_slides)
         .concat(balloons_slides)
         .concat(ants_slides)
         .concat(img_slides)
         .concat([
             text_slide('Experiment completed! Thank you for taking part.')
-        ]);*/
-var slides = check_slides;
+        ]);
 
 var imgs = []; // array for preloaded images
 
@@ -256,8 +256,6 @@ function slide_next() {
     } else {
         document.webkitExitFullscreen();
 
-        $(document).off('keypress');
-
         console.log('sending data to server...');
         participant.submit_eye_data(function (data) {
             console.log('response from server: ' + data.status);
@@ -275,7 +273,7 @@ function on_xlabs_ready() {
     $(window).on('beforeunload', function () {
         xLabs.setConfig('system.mode', 'off');
     });
-    
+
     Check.onXlabsReady();
 
     //xLabs.setConfig('calibration.clear', '1');
@@ -342,6 +340,13 @@ window.onload = function () {
         if (isfullscreen) {
             console.log('entering fullscreen mode');
 
+            if (KEYPRESS_SKIP) {
+                $(document).keypress(function (ev) {
+                    if (ev.key === ' ')
+                        slide_next();
+                });
+            }
+
             slidei = 0; // reset slide counter (start from beginning)
             slides[0].onstart(); // show first slide
         } else {
@@ -349,6 +354,8 @@ window.onload = function () {
 
             if (slides[slidei].onend)
                 slides[slidei].onend();
+
+            $(document).off('keypress');
 
             if (testphase) {
                 participant.eye_data.push({
@@ -362,13 +369,6 @@ window.onload = function () {
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
         }
     });
-
-    if (KEYPRESS_SKIP) {
-        $(document).keypress(function (ev) {
-            if (ev.key === ' ')
-                slide_next();
-        });
-    }
 
     // add event listeners
     document.addEventListener("xLabsApiReady", function () {
