@@ -26,6 +26,7 @@ var stimuli = [];
 
 var isfullscreen = false;
 var testphase = false;
+var experiment_finished = false;
 
 // different sets of slides for experiment
 var intro_slides = [
@@ -291,14 +292,18 @@ function slide_next() {
 }
 
 function on_experiment_end() {
-    document.webkitExitFullscreen();
+    if (!experiment_finished) {
+        experiment_finished = true;
 
-    set_inittext('Experiment complete. Click <a href="experiment.html">here</a> to start again.')
+        document.webkitExitFullscreen();
 
-    console.log('sending data to server...');
-    participant.submit_eye_data(function (data) {
-        console.log('response from server: ' + data.status);
-    });
+        set_inittext('Experiment complete. Click <a href="experiment.html">here</a> to start again.')
+
+        console.log('sending data to server...');
+        participant.submit_eye_data(function (data) {
+            console.log('response from server: ' + data.status);
+        });
+    }
 }
 
 function xlabs_start(callback) {
