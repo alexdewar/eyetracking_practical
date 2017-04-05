@@ -19,10 +19,10 @@ function ci95($x, $mean) {
     return 1.96 * std($x, $mean) / sqrt(count($x));
 }
 
-if (empty($sid)) {
-    $sid = '0000-00-00';
-} else {
+if (isset($_GET['sid'])) {
     $sid = filter_sid($_GET['sid']);
+} else {
+    $sid = '0000-00-00';
 }
 
 $pid = filter_input(INPUT_GET, 'pid', FILTER_SANITIZE_NUMBER_INT);
