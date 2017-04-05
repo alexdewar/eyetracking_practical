@@ -116,7 +116,13 @@ class Participant {
 
     submit_eye_data(callback) {
         $.post(REMOTE_URL + '/api/submit_eye_data.php',
-                {data: JSON.stringify({sid: SESSION_ID, pid: this.pid, code: this.code, stimuli: stimuli, eye_data: this.eye_data})},
+                {data: JSON.stringify({
+                        sid: SESSION_ID,
+                        pid: this.pid,
+                        code: this.code,
+                        screen: {width: screen.width, height: screen.height},
+                        stimuli: stimuli,
+                        eye_data: this.eye_data})},
                 callback);
     }
 
