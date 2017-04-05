@@ -281,7 +281,8 @@ function on_xlabs_ready() {
 
     Check.onXlabsReady();
 
-    //xLabs.setConfig('calibration.clear', '1');
+    if (!DEBUG)
+        xLabs.setConfig('calibration.clear', '1');
     xLabs.setConfig('system.mode', 'learning');
     xLabs.setConfig('browser.canvas.paintLearning', '0');
 }
