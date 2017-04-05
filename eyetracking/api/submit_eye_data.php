@@ -13,7 +13,7 @@ $pstr = $_POST['data'];
 
 ($pdata = json_decode($pstr)) || p_error('bad json');
 
-$fn = p_filename((int) $pdata->sid, (int) $pdata->pid);
+$fn = p_filename(filter_sid($pdata->sid), (int) $pdata->pid);
 if (!file_exists($fn)) {
     p_error('no file');
 }

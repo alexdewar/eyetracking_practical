@@ -5,7 +5,7 @@ require('../common.php');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-$sid = (int) filter_input(INPUT_GET, 'sid', FILTER_SANITIZE_NUMBER_INT);
+$sid = filter_sid($_GET['sid']);
 
 $pid = 1;
 while (true) {
