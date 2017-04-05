@@ -286,14 +286,19 @@ function slide_next() {
             slides[slidei].onend();
 
         slides[++slidei].onstart();
-    } else {
-        document.webkitExitFullscreen();
+    } else
+        on_experiment_end();
+}
 
-        console.log('sending data to server...');
-        participant.submit_eye_data(function (data) {
-            console.log('response from server: ' + data.status);
-        });
-    }
+function on_experiment_end() {
+    document.webkitExitFullscreen();
+
+    set_inittext('Experiment complete. Click <a href="experiment.html">here</a> to start again.')
+
+    console.log('sending data to server...');
+    participant.submit_eye_data(function (data) {
+        console.log('response from server: ' + data.status);
+    });
 }
 
 function xlabs_start(callback) {
