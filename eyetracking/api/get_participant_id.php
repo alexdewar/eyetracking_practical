@@ -1,6 +1,6 @@
 <?php
 
-require('common.php');
+require('../common.php');
 
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
