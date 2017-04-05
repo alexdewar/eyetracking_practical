@@ -445,18 +445,18 @@ window.onload = function () {
         }
     });
 
-    // add event listeners
-    document.addEventListener("xLabsApiReady", function () {
-        xLabs.onApiReady();
-    });
+    /*// add event listeners
+     document.addEventListener("xLabsApiReady", function () {
+     xLabs.onApiReady();
+     });
 
-    document.addEventListener("xLabsApiState", function (event) {
-        xLabs.onApiState(event.detail);
-    });
+     document.addEventListener("xLabsApiState", function (event) {
+     xLabs.onApiState(event.detail);
+     });
 
-    document.addEventListener("xLabsApiIdPath", function (event) {
-        xLabs.onApiIdPath(event.detail);
-    });
+     document.addEventListener("xLabsApiIdPath", function (event) {
+     xLabs.onApiIdPath(event.detail);
+     });*/
 
     ants = new XLabsAnts();
     ants.init(function ()
