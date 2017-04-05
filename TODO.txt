@@ -2,6 +2,10 @@
 - suppress PHP error messages on server (mucks up json!)
 
 client:
+- figure out why xlabs starts twice
+- don't repeatedly send data to server
+- don't record data when tracking suspended
+- log when tracking is suspended
 - big reset button (for new participant)
 - slide to show progress of data submission to server
 - text instructions for image slides
