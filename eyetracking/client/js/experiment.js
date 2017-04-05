@@ -324,21 +324,21 @@ function on_all_started(error) {
 
         // work out the size and position of image on canvas
         var img_rat = img.width / img.height;
-        var canvas_rat = Canvas.element.width / Canvas.element.height;
+        var canvas_rat = screen.width / screen.height;
         if (img_rat > canvas_rat) { // image is *relatively* wider than screen
             var dest = {
-                width: Canvas.element.width,
-                height: Math.round(Canvas.element.width / img_rat),
+                width: screen.width,
+                height: Math.round(screen.width / img_rat),
                 left: 0
             };
-            dest.top = Math.round((Canvas.element.height - dest.height) / 2);
+            dest.top = Math.round((screen.height - dest.height) / 2);
         } else { // image is relatively taller than screen
             var dest = {
-                width: Math.round(Canvas.element.height * img_rat),
-                height: Canvas.element.height,
+                width: Math.round(screen.height * img_rat),
+                height: screen.height,
                 top: 0
             };
-            dest.left = Math.round((Canvas.element.width - dest.width) / 2);
+            dest.left = Math.round((screen.width - dest.width) / 2);
         }
 
         stimuli.push({
