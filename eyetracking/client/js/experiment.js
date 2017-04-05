@@ -122,17 +122,19 @@ class Participant {
     }
 
     submit_eye_data(callback) {
-        $.post(REMOTE_URL + '/api/submit_eye_data.php',
-                {data: JSON.stringify({
-                        sid: SESSION_ID,
-                        pid: this.pid,
-                        code: this.code,
-                        screen: {width: screen.width, height: screen.height},
-                        stimuli: stimuli,
-                        yarbus_condition: this.yarbus_condition,
-                        yarbus_conditions: YARBUS_CONDITIONS,
-                        eye_data: this.eye_data})},
-                callback);
+        var data = JSON.stringify({
+            sid: SESSION_ID,
+            pid: this.pid,
+            code: this.code,
+            screen: {width: screen.width, height: screen.height},
+            stimuli: stimuli,
+            yarbus_condition: this.yarbus_condition,
+            yarbus_conditions: YARBUS_CONDITIONS,
+            eye_data: this.eye_data});
+        $.post(REMOTE_URL + '/api/submit_eye_data.php', {data: data}, callback);
+
+        console.log('submitting data:');
+        console.log(data);
     }
 
     static create(callback) {
@@ -424,8 +426,6 @@ window.onload = function () {
                     type: 'end'
                 })
             }
-            console.log('eye data:');
-            console.log(participant.eye_data);
 
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
         }
