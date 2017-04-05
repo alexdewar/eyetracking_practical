@@ -62,7 +62,9 @@ var ants_slides = [
 ];
 var img_slides = [
     text_slide('<p>This is now the testing phase of the experiment.</p>' +
-            '<p>You will be presented with a series of images...</p>'),
+            '<p>You now be shown a scene with a family in. As you are looking at the scene, try to remember what clothes  people are wearing.</p>' +
+            '<p>Click next to begin.</p>'),
+
     {
         onstart: function () {
             testphase = true;
@@ -72,6 +74,8 @@ var img_slides = [
         }
     },
     img_slide('yarbus', 30),
+
+    text_slide('<p>You will now be shown another scene. At some point the scene will change; try to look out for this.</p>'),
     img_slide('changeblindness1', 15),
     img_slide('changeblindness2', 15),
 ];
