@@ -6,7 +6,6 @@ console.log('SESSION ID: ' + SESSION_ID);
 var KEYPRESS_SKIP = DEBUG;
 
 var ANTS_GAME_DURATION = 180; // seconds
-var IMG_DURATION = 30; // seconds
 
 var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking'
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
@@ -72,9 +71,9 @@ var img_slides = [
             slide_next();
         }
     },
-    img_slide('yarbus'),
-    img_slide('changeblindness1'),
-    img_slide('changeblindness2'),
+    img_slide('yarbus', 30),
+    img_slide('changeblindness1', 15),
+    img_slide('changeblindness2', 15),
 ];
 
 // initialise set of "slides" for experiment
@@ -158,7 +157,7 @@ function text_slide(text) {
     };
 }
 
-function img_slide(fn) {
+function img_slide(fn, duration) {
     return {
         onstart: function () {
             $('.fullscreen').hide();
@@ -173,7 +172,7 @@ function img_slide(fn) {
             Canvas.context.drawImage(img, dest.left, dest.top, dest.width, dest.height);
 
             // start timer
-            img_timeout = setTimeout(slide_next, IMG_DURATION * 1000);
+            img_timeout = setTimeout(slide_next, duration * 1000);
 
             participant.eye_data.push({
                 t: expt_time(),
