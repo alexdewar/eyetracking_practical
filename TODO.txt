@@ -2,6 +2,7 @@
 - suppress PHP error messages on server (mucks up json!)
 
 client:
+- xlabs: "domain not licenced" bug
 - figure out why xlabs starts twice
 - don't repeatedly send data to server
 - don't record data when tracking suspended

@@ -16,6 +16,11 @@ var IMG_FILES = [
     'changeblindness2'
 ];
 
+var YARBUS_CONDITIONS = [
+    'Your task is to estimate the wealth of the family.',
+    'Your task is to guess for how long the man in the image has been away.'
+];
+
 var imgs = []; // array for preloaded images
 var stimuli = [];
 
@@ -61,10 +66,7 @@ var ants_slides = [
     }
 ];
 var img_slides = [
-    text_slide('<p>This is now the testing phase of the experiment.</p>' +
-            '<p>You now be shown a scene with a family in. As you are looking at the scene, try to remember what clothes  people are wearing.</p>' +
-            '<p>Click next to begin.</p>'),
-
+    yarbus_instructions(),
     {
         onstart: function () {
             testphase = true;
@@ -109,9 +111,14 @@ function check_end() {
 var participant;
 class Participant {
     constructor(pid, code) {
+        console.log('participant num: ' + pid);
+
         this.pid = pid;
         this.code = code;
         this.eye_data = [];
+
+        this.yarbus_condition = Math.round(Math.random() * (YARBUS_CONDITIONS.length - 1));
+        console.log('participant assigned to condition ' + this.yarbus_condition + " ('" + YARBUS_CONDITIONS[this.yarbus_condition] + "')");
     }
 
     submit_eye_data(callback) {
@@ -122,6 +129,8 @@ class Participant {
                         code: this.code,
                         screen: {width: screen.width, height: screen.height},
                         stimuli: stimuli,
+                        yarbus_condition: this.yarbus_condition,
+                        yarbus_conditions: YARBUS_CONDITIONS,
                         eye_data: this.eye_data})},
                 callback);
     }
@@ -160,6 +169,23 @@ function text_slide(text) {
 
             // change instruction text
             $('#text')[0].innerHTML = text;
+
+            // make instruction textbox visible
+            $('#textbox').show();
+        }
+    };
+}
+
+function yarbus_instructions() {
+    return {
+        onstart: function () {
+            $('.fullscreen').hide();
+
+            // change instruction text
+            $('#text')[0].innerHTML = '<p>This is now the testing phase of the experiment.</p>' +
+                    '<p>You now be shown a scene with a family in.</p>' +
+                    '<p>' + YARBUS_CONDITIONS[participant.yarbus_condition] + '</p>' +
+                    '<p>Click next to begin.</p>';
 
             // make instruction textbox visible
             $('#textbox').show();
