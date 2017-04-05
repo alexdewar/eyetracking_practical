@@ -80,7 +80,7 @@ var img_slides = [
 
     text_slide('<p>You will now be shown another scene. At some point the scene will change; try to look out for this.</p>'),
     img_slide('changeblindness1', 15),
-    img_slide('changeblindness2', 15),
+    img_slide('changeblindness2', 3),
 ];
 
 // initialise set of "slides" for experiment
