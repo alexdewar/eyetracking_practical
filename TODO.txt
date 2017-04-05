@@ -2,15 +2,16 @@
 - suppress PHP error messages on server (mucks up json!)
 
 client:
+- let Ps go back and forth between "check", calibration and test
 - hide mouse during image slides
+- add masking to change blindness slides (or similar)
+- add extra change blindness slides
+- let Ps indicate when they notice a change for the change blindness tasks
 - xlabs: "domain not licenced" bug
-- don't repeatedly send data to server
 - don't record data when tracking suspended
 - log when tracking is suspended
 - slide to show progress of data submission to server
 - set timeout for server response to participant id request
-- find better change blindness images ("easy" and "hard")
-- let Ps indicate when they notice a change for the change blindness tasks
 - better initial text display for page
 - fix fuzzy text in check slide
 - better next/prev buttons for textbox
