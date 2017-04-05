@@ -22,7 +22,7 @@ function ci95($x, $mean) {
 if (isset($_GET['sid'])) {
     $sid = filter_sid($_GET['sid']);
 } else {
-    $sid = '0000-00-00';
+    $sid = date('Y-m-d');
 }
 
 $pid = filter_input(INPUT_GET, 'pid', FILTER_SANITIZE_NUMBER_INT);
