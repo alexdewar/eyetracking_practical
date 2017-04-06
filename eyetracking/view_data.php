@@ -57,6 +57,11 @@ function get_data($fn) {
                     continue;
                 }
 
+                $conf = (int) $msg['conf'];
+                if ($conf === -1 || $conf >= 8) {
+                    continue;
+                }
+
                 array_push($eye_data[$ctrial]['x'], $msg['x']);
                 array_push($eye_data[$ctrial]['y'], $msg['y']);
 
