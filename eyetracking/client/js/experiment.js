@@ -419,7 +419,7 @@ window.onload = function () {
 
             if (KEYPRESS_SKIP) {
                 $(document).keypress(function (ev) {
-                    if (ev.key === ' ')
+                    if (ev.key === 'n')
                         slide_next();
                 });
             }
