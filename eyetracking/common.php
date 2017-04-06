@@ -5,7 +5,7 @@ function filter_sid($sid) {
 }
 
 function p_filename($sid, $pid) {
-    return sprintf(__DIR__ . '/data/s%s_p%04d.json', $sid, $pid);
+    return sprintf(__DIR__ . '/data/s%s_p%04d_info.json', $sid, $pid);
 }
 
 function p_data_filename($sid, $pid) {
