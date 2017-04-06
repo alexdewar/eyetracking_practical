@@ -289,7 +289,7 @@ function cb_slide(num) {
 
             $('#cb_div').show();
 
-            setInterval(function () {
+            cb_interval = setInterval(function () {
                 if (cb_on_flicker) {
                     cbs[cb_which_im].show();
                     cb_on_flicker = false;
@@ -300,6 +300,12 @@ function cb_slide(num) {
                     cb_which_im = 1 - cb_which_im;
                 }
             }, CB_TICK_DURATION);
+
+            cb_timeout = setTimeout(slide_next, MAX_CB_DURATION * 1000);
+        },
+
+        onend: function () {
+            clearInterval(cb_interval);
         }
     }
 }
