@@ -32,6 +32,110 @@ var isfullscreen = false;
 var testphase = false;
 var experiment_finished = false;
 
+var choose_slide = {
+    onstart: function () {
+        $('.fullscreen').hide();
+
+        // change instruction text
+        $('#text')[0].innerHTML = '<p>Please choose from the following options:</p>' +
+                '<ul><li><a href="#" onclick="change_slide(check_slide);">Adjust head position</a></li>' +
+                '<li><a href="#" onclick="change_slide(balloons_instructions_slide);">Balloons game</a> (for calibration)</li>' +
+                '<li><a href="#" onclick="change_slide(ants_instructions_slide);">Ants game</a> (for calibration)</li>' +
+                '<li><a href="#" onclick="change_slide(yarbus_instructions_slide);">Experiment</a> (when you\'re happy with the calibration!)</li></ul>';
+
+        // make instruction textbox visible
+        $('#prev_next').hide();
+        $('#textbox').show();
+    }
+};
+
+var check_slide = {
+    onstart: function () {
+        $('.fullscreen').hide();
+
+        Check.start();
+        $('#xlabs_check').show();
+    },
+
+    onend: function () {
+        Check.stop();
+        $('#xlabs_check').hide();
+    }
+};
+
+var balloons_instructions_slide = text_slide('<p>First you will play a game to calibrate the eye tracker.</p>' +
+        '<p>The aim is to pop balloons by clicking on them. ' +
+        'The eye tracker should learn where you are looking and after a while, your gaze should be visible on the screen as a red circle. ' +
+        'You can also pop balloons by looking at them.</p>' +
+        '<p>Click next to begin.</p>');
+
+var balloons_slide = {
+    onstart: function () {
+        console.log('starting balloons game')
+
+        $('.fullscreen').hide();
+        $('#balloons').show();
+        Canvas.show();
+
+        Balloons.start();
+    },
+
+    onstop: function () {
+        Balloons.stop();
+    }
+};
+
+var ants_instructions_slide = text_slide('<p>You will now play another game.</p>' +
+        '<p>The aim this time is to squash ants by clicking on them with the mouse. ' +
+        'As before, if the system is calibrated correctly you should be able to squash them by looking at them.</p>' +
+        '<p>Click next to begin.</p>');
+
+var ants_slide = {
+    onstart: function () {
+        console.log('starting ants game');
+
+        $('.fullscreen').hide();
+
+        Canvas.clear();
+        $('#xLabsAppCanvas').css('background-color', 'white');
+        Canvas.show();
+
+        ants_timeout = setTimeout(function () {
+            ants.run_game = false;
+            if (isfullscreen) {
+                slide_next();
+            }
+        }, ANTS_GAME_DURATION * 1000);
+
+        set_canvas_click(function (e) {
+            ants.onClick(e);
+        });
+
+        ants.run_game = true;
+        ants.mainLoop();
+    },
+
+    onstop: function () {
+        clearTimeout(ants_timeout);
+        ants.run_game = false;
+    }
+};
+
+var yarbus_instructions_slide = {
+    onstart: function () {
+        $('.fullscreen').hide();
+
+        // change instruction text
+        $('#text')[0].innerHTML = '<p>This is now the testing phase of the experiment.</p>' +
+                '<p>You now be shown a scene with a family in.</p>' +
+                '<p>' + YARBUS_CONDITIONS[participant.yarbus_condition] + '</p>' +
+                '<p>Click next to begin.</p>';
+
+        // make instruction textbox visible
+        $('#textbox').show();
+    }
+};
+
 // different sets of slides for experiment
 var intro_slides = [
     text_slide('<p>Welcome to the eye tracking practical.</p> ' +
@@ -44,34 +148,21 @@ var intro_slides = [
 ];
 var check_slides = [
     text_slide('<p>You will now be shown the output of the webcam in order to help you position yourself correctly relative to the webcam.</p>'),
-    {
-        onstart: check_start,
-        onend: check_end
-    }
+    check_slide,
+    choose_slide
 ]
 var balloons_slides = [
-    text_slide('<p>First you will play a game to calibrate the eye tracker.</p>' +
-            '<p>The aim is to pop balloons by clicking on them. ' +
-            'The eye tracker should learn where you are looking and after a while, your gaze should be visible on the screen as a red circle. ' +
-            'You can also pop balloons by looking at them.</p>' +
-            '<p>Click next to begin.</p>'),
-    {
-        onstart: balloons_start,
-        onend: balloons_end
-    }
+    balloons_instructions_slide,
+    balloons_slide,
+    jump_slide(choose_slide)
 ]
 var ants_slides = [
-    text_slide('<p>You will now play another game.</p>' +
-            '<p>The aim this time is to squash ants by clicking on them with the mouse. ' +
-            'As before, if the system is calibrated correctly you should be able to squash them by looking at them.</p>' +
-            '<p>Click next to begin.</p>'),
-    {
-        onstart: ants_start,
-        onend: ants_end
-    }
+    ants_instructions_slide,
+    ants_slide,
+    jump_slide(choose_slide)
 ];
 var img_slides = [
-    yarbus_instructions(),
+    yarbus_instructions_slide,
     {
         onstart: function () {
             testphase = true;
@@ -100,18 +191,6 @@ var slides = intro_slides
 var imgs = []; // array for preloaded images
 
 var xlabs_started = false;
-
-function check_start() {
-    $('.fullscreen').hide();
-
-    Check.start();
-    $('#xlabs_check').show();
-}
-
-function check_end() {
-    Check.stop();
-    $('#xlabs_check').hide();
-}
 
 var participant;
 class Participant {
@@ -178,24 +257,24 @@ function text_slide(text) {
             $('#text')[0].innerHTML = text;
 
             // make instruction textbox visible
+            $('#prev_next').show();
             $('#textbox').show();
         }
     };
 }
 
-function yarbus_instructions() {
+function change_slide(slide) {
+    if (slides[slidei].onend)
+        slides[slidei].onend();
+
+    slidei = slides.indexOf(slide);
+    slides[slidei].onstart();
+}
+
+function jump_slide(slide) {
     return {
         onstart: function () {
-            $('.fullscreen').hide();
-
-            // change instruction text
-            $('#text')[0].innerHTML = '<p>This is now the testing phase of the experiment.</p>' +
-                    '<p>You now be shown a scene with a family in.</p>' +
-                    '<p>' + YARBUS_CONDITIONS[participant.yarbus_condition] + '</p>' +
-                    '<p>Click next to begin.</p>';
-
-            // make instruction textbox visible
-            $('#textbox').show();
+            change_slide(slide);
         }
     };
 }
@@ -231,49 +310,6 @@ function img_slide(fn, duration) {
             clearTimeout(img_timeout)
         }
     };
-}
-
-function ants_start() {
-    console.log('starting ants game');
-
-    $('.fullscreen').hide();
-
-    Canvas.clear();
-    $('#xLabsAppCanvas').css('background-color', 'white');
-    Canvas.show();
-
-    ants_timeout = setTimeout(function () {
-        ants.run_game = false;
-        if (isfullscreen) {
-            slide_next();
-        }
-    }, ANTS_GAME_DURATION * 1000);
-
-    set_canvas_click(function (e) {
-        ants.onClick(e);
-    });
-
-    ants.run_game = true;
-    ants.mainLoop();
-}
-
-function ants_end() {
-    clearTimeout(ants_timeout);
-    ants.run_game = false;
-}
-
-function balloons_start() {
-    console.log('starting balloons game')
-
-    $('.fullscreen').hide();
-    $('#balloons').show();
-    Canvas.show();
-
-    Balloons.start();
-}
-
-function balloons_end() {
-    Balloons.stop();
 }
 
 function slide_prev() {
