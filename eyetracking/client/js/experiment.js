@@ -24,7 +24,13 @@ var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 var IMG_FILES = [
     'yarbus',
     'change_blindness/1a',
-    'change_blindness/1b'
+    'change_blindness/1b',
+    'change_blindness/2a',
+    'change_blindness/2b',
+    'change_blindness/3a',
+    'change_blindness/3b',
+    'change_blindness/4a',
+    'change_blindness/4b'
 ];
 
 var YARBUS_CONDITIONS = [
@@ -39,13 +45,29 @@ var isfullscreen = false;
 var testphase = false;
 var experiment_finished = false;
 
+var cb_blank_slide = {
+    onstart: function () {
+        $('.fullscreen').hide();
+
+        $('#xLabsAppCanvas').css('background-color', 'black');
+        Canvas.clear();
+        Canvas.show();
+
+        cb_blank_timeout = setTimeout(slide_next, 1500);
+    },
+
+    onend: function () {
+        clearTimeout(cb_blank_timeout);
+    }
+}
+
 // different sets of slides for experiment
 var intro_slides = [
     text_slide('<p>Welcome to the eye tracking practical.</p> ' +
             '<p>During this experiment, we will track the positions of your eyes using the webcam in front of you.</p> ' +
             '<p>You will first be given some instructions, then you will play a few games to calibrate the eye tracker, then you will perform some data collection.</p> ' +
             '<p>Click next to continue.</p>'),
-    text_slide('<p>For the webcam to get a good image, you should checck that there are no external sources of light. ' +
+    text_slide('<p>For the webcam to get a good image, you should check that there are no external sources of light. ' +
             'You should make sure that your hair is not in your face and if you wear glasses but have only a mild prescription, consider removing them (this is not essential).</p> ' +
             '<p>Most importantly, you should try to keep your head in the same position during both the calibration and testing phases of the experiment.</p>')
 ];
@@ -90,7 +112,11 @@ var yarbus_slides = [
     img_slide('yarbus', 30),
 ];
 var cb_slides = [
-    text_slide('(cb instructions...)'),
+    text_slide('<p>You will now do a series of change blindness trials.</p>' +
+            '<p>An image will be presented to you (after a delay) and will alternate with a different version of the same image. ' +
+            'When you notice the change between the images, press the spacebar to continue to the next trial. ' +
+            'If you don\'t notice within 60s, the trial will end automatically.</p>' +
+            '<p>Click next to begin.</p>'),
     /*{
      onstart: function () {
      testphase = true;
@@ -98,21 +124,27 @@ var cb_slides = [
 
      slide_next();
      }
-     },
-     img_slide('change_blindness/1a', 30),*/
-    cb_slide(1)
+     },*/
+    cb_blank_slide,
+    cb_slide(1),
+    cb_blank_slide,
+    cb_slide(2),
+    cb_blank_slide,
+    cb_slide(3),
+    cb_blank_slide,
+    cb_slide(4)
 ];
 
 // initialise set of "slides" for experiment
-/*var slides = intro_slides
- .concat(check_slides)
- .concat(balloons_slides)
- .concat(ants_slides)
- .concat(yarbus_slides)
- .concat([
- text_slide('Experiment completed! Thank you for taking part.')
- ]);*/
-var slides = cb_slides;
+var slides = intro_slides
+        .concat(check_slides)
+        .concat(balloons_slides)
+        .concat(ants_slides)
+        .concat(yarbus_slides)
+        .concat(cb_slides)
+        .concat([
+            text_slide('Experiment completed! Thank you for taking part.')
+        ]);
 
 var imgs = []; // array for preloaded images
 
@@ -261,11 +293,11 @@ function cb_slide(num) {
 
             var cb_imgs = [imgs[prefix + 'a'], imgs[prefix + 'b']];
 
-            /*participant.eye_data.push({
-             t: expt_time(),
-             type: 'trial',
-             trial: prefix
-             });*/
+            participant.eye_data.push({
+                t: expt_time(),
+                type: 'trial',
+                trial: prefix
+            });
 
             var dests = [stimuli[IMG_FILES.indexOf(prefix + 'a')].dest, stimuli[IMG_FILES.indexOf(prefix + 'b')].dest];
 
@@ -286,6 +318,7 @@ function cb_slide(num) {
             cb_on_flicker = false;
             cb_which_im = 0;
             cb_tick = 0;
+            run_cb = true;
 
             $('#cb_div').show();
 
@@ -301,11 +334,13 @@ function cb_slide(num) {
                 }
             }, CB_TICK_DURATION);
 
-            cb_timeout = setTimeout(slide_next, MAX_CB_DURATION * 1000);
+            cb_timeout = setTimeout(slide_next, MAX_CB_DURATION);
         },
 
         onend: function () {
+            run_cb = false;
             clearInterval(cb_interval);
+            clearTimeout(cb_timeout);
         }
     }
 }
@@ -494,12 +529,18 @@ window.onload = function () {
         if (isfullscreen) {
             console.log('entering fullscreen mode');
 
-            if (KEYPRESS_SKIP) {
-                $(document).keypress(function (ev) {
-                    if (ev.key === 'n')
-                        slide_next();
-                });
-            }
+            $(document).keypress(function (ev) {
+                if (KEYPRESS_SKIP && ev.key === 'n')
+                    slide_next();
+                else if (run_cb && ev.key === ' ') {
+                    participant.eye_data.push({
+                        t: expt_time(),
+                        type: 'cb_keypress',
+                    });
+                    slide_next();
+                }
+            });
+
 
             slidei = 0; // reset slide counter (start from beginning)
             slides[0].onstart(); // show first slide

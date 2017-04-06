@@ -22,10 +22,20 @@ function ci95($x, $mean) {
 function get_data($fn) {
     $pdata = json_decode(file_get_contents($fn), true);
 
+    $yarbus_cond = $pdata['yarbus_condition'];
+
     $eye_data = array();
     foreach ($pdata['stimuli'] as $stim) {
-        $eye_data[$stim['name']]['src'] = $stim['src'];
-        $eye_data[$stim['name']]['dest'] = $stim['dest'];
+        $name = $stim['name'];
+
+        if ($name === 'yarbus') {
+            $name .= $yarbus_cond;
+        } else {
+            $name = substr($name, 0, strlen($name) - 1);
+        }
+
+        $eye_data[$name]['src'] = $stim['src'];
+        $eye_data[$name]['dest'] = $stim['dest'];
     }
 
     $ctrial = '';
@@ -34,6 +44,9 @@ function get_data($fn) {
         switch ($msg['type']) {
             case 'trial':
                 $ctrial = $msg['trial'];
+                if ($ctrial === 'yarbus') {
+                    $ctrial .= $yarbus_cond;
+                }
 
                 $eye_data[$ctrial]['x'] = array();
                 $eye_data[$ctrial]['y'] = array();
