@@ -16,8 +16,8 @@ var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 
 var IMG_FILES = [
     'yarbus',
-    'changeblindness1',
-    'changeblindness2'
+    'change_blindness/1a',
+    'change_blindness/1b'
 ];
 
 var YARBUS_CONDITIONS = [
@@ -83,8 +83,8 @@ var img_slides = [
     img_slide('yarbus', 30),
 
     text_slide('<p>You will now be shown another scene. At some point the scene will change; try to look out for this.</p>'),
-    img_slide('changeblindness1', 15),
-    img_slide('changeblindness2', 3),
+    img_slide('change_blindness/1a', 15),
+    img_slide('change_blindness/1b', 3),
 ];
 
 // initialise set of "slides" for experiment
