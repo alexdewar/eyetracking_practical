@@ -11,6 +11,13 @@ var KEYPRESS_SKIP = DEBUG;
 
 var ANTS_GAME_DURATION = 180; // seconds
 
+var MAX_CB_DURATION = 60000; // milliseconds
+var CB_TICK_DURATION = 80;
+var CB_SHOW_TICKS = 3;
+var CB_BLANK_TICKS = 1;
+var CB_REPEATS = 2;
+var CB_BLANK_COLOUR = 'lightgray';
+
 var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking'
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 
@@ -70,7 +77,7 @@ var ants_slides = [
         onend: ants_end
     }
 ];
-var img_slides = [
+var yarbus_slides = [
     yarbus_instructions(),
     {
         onstart: function () {
@@ -81,21 +88,31 @@ var img_slides = [
         }
     },
     img_slide('yarbus', 30),
+];
+var cb_slides = [
+    text_slide('(cb instructions...)'),
+    /*{
+     onstart: function () {
+     testphase = true;
+     teststarttime = performance.now();
 
-    text_slide('<p>You will now be shown another scene. At some point the scene will change; try to look out for this.</p>'),
-    img_slide('change_blindness/1a', 15),
-    img_slide('change_blindness/1b', 3),
+     slide_next();
+     }
+     },
+     img_slide('change_blindness/1a', 30),*/
+    cb_slide(1)
 ];
 
 // initialise set of "slides" for experiment
-var slides = intro_slides
-        .concat(check_slides)
-        .concat(balloons_slides)
-        .concat(ants_slides)
-        .concat(img_slides)
-        .concat([
-            text_slide('Experiment completed! Thank you for taking part.')
-        ]);
+/*var slides = intro_slides
+ .concat(check_slides)
+ .concat(balloons_slides)
+ .concat(ants_slides)
+ .concat(yarbus_slides)
+ .concat([
+ text_slide('Experiment completed! Thank you for taking part.')
+ ]);*/
+var slides = cb_slides;
 
 var imgs = []; // array for preloaded images
 
@@ -213,6 +230,7 @@ function img_slide(fn, duration) {
             Canvas.clear();
             $('#xLabsAppCanvas').css('background-color', 'black');
             Canvas.context.drawImage(img, dest.left, dest.top, dest.width, dest.height);
+            console.log(Canvas.element.width + "x" + Canvas.element.height);
 
             // start timer
             img_timeout = setTimeout(slide_next, duration * 1000);
@@ -231,6 +249,59 @@ function img_slide(fn, duration) {
             clearTimeout(img_timeout)
         }
     };
+}
+
+var run_cb = false;
+function cb_slide(num) {
+    return {
+        onstart: function () {
+            $('.fullscreen').hide();
+
+            var prefix = 'change_blindness/' + num;
+
+            var cb_imgs = [imgs[prefix + 'a'], imgs[prefix + 'b']];
+
+            /*participant.eye_data.push({
+             t: expt_time(),
+             type: 'trial',
+             trial: prefix
+             });*/
+
+            var dests = [stimuli[IMG_FILES.indexOf(prefix + 'a')].dest, stimuli[IMG_FILES.indexOf(prefix + 'b')].dest];
+
+            // draw "slide" image on canvas
+            cbs = [$('#cb0'), $('#cb1')];
+            for (var i in cbs) {
+                //var i = 0;
+                var cur = cbs[i][0];
+                cur.width = screen.width;
+                cur.height = screen.height;
+                var ctx = cur.getContext('2d');
+                ctx.clearRect(0, 0, screen.width, screen.height);
+                ctx.drawImage(cb_imgs[i], dests[i].left, dests[i].top, dests[i].width, dests[i].height);
+            }
+            cbs[0].show();
+            cbs[1].hide();
+
+            cb_on_flicker = false;
+            cb_which_im = 0;
+            cb_tick = 0;
+
+            $('#cb_div').show();
+
+            setInterval(function () {
+                if (cb_on_flicker) {
+                    cbs[cb_which_im].show();
+                    cb_on_flicker = false;
+                } else if (++cb_tick === CB_SHOW_TICKS) {
+                    cb_tick = 0;
+                    cb_on_flicker = true;
+                    cbs[cb_which_im].hide();
+                    cb_which_im = 1 - cb_which_im;
+                }
+            }, CB_TICK_DURATION);
+        }
+    }
 }
 
 function ants_start() {
