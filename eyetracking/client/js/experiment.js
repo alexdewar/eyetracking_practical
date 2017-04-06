@@ -56,7 +56,7 @@ var cb_blank_slide = {
         cb_blank_timeout = setTimeout(slide_next, 1500);
     },
 
-    onend: function () {
+    onstop: function () {
         clearTimeout(cb_blank_timeout);
     }
 }
@@ -75,7 +75,7 @@ var check_slides = [
     text_slide('<p>You will now be shown the output of the webcam in order to help you position yourself correctly relative to the webcam.</p>'),
     {
         onstart: check_start,
-        onend: check_end
+        onstop: check_end
     }
 ]
 var balloons_slides = [
@@ -86,7 +86,7 @@ var balloons_slides = [
             '<p>Click next to begin.</p>'),
     {
         onstart: balloons_start,
-        onend: balloons_end
+        onstop: balloons_end
     }
 ]
 var ants_slides = [
@@ -96,7 +96,7 @@ var ants_slides = [
             '<p>Click next to begin.</p>'),
     {
         onstart: ants_start,
-        onend: ants_end
+        onstop: ants_end
     }
 ];
 var yarbus_slides = [
@@ -337,7 +337,7 @@ function cb_slide(num) {
             cb_timeout = setTimeout(slide_next, MAX_CB_DURATION);
         },
 
-        onend: function () {
+        onstop: function () {
             run_cb = false;
             clearInterval(cb_interval);
             clearTimeout(cb_timeout);
@@ -390,8 +390,8 @@ function balloons_end() {
 
 function slide_prev() {
     if (slidei > 0) {
-        if (slides[slidei].onend)
-            slides[slidei].onend();
+        if (slides[slidei].onstop)
+            slides[slidei].onstop();
 
         slides[--slidei].onstart();
     }
@@ -399,8 +399,8 @@ function slide_prev() {
 
 function slide_next() {
     if (slidei < slides.length - 1) {
-        if (slidei > 0 && slides[slidei].onend)
-            slides[slidei].onend();
+        if (slidei > 0 && slides[slidei].onstop)
+            slides[slidei].onstop();
 
         slides[++slidei].onstart();
     } else
@@ -547,8 +547,8 @@ window.onload = function () {
         } else {
             console.log('exiting fullscreen mode');
 
-            if (slides[slidei].onend)
-                slides[slidei].onend();
+            if (slides[slidei].onstop)
+                slides[slidei].onstop();
 
             $(document).off('keypress');
 
