@@ -99,8 +99,10 @@ if ($pid === -1) {
                 $eye_data[$key] = array('x' => array(), 'y' => array());
             }
 
-            array_push($eye_data[$key]['x'], mean($value['x']));
-            array_push($eye_data[$key]['y'], mean($value['y']));
+            if (count($value['x']) > 0) {
+                array_push($eye_data[$key]['x'], mean($value['x']));
+                array_push($eye_data[$key]['y'], mean($value['y']));
+            }
         }
     }
 } else {
