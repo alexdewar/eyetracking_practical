@@ -56,7 +56,7 @@ var cb_blank_slide = {
         cb_blank_timeout = setTimeout(slide_next, 1500);
     },
 
-    onend: function () {
+    onstop: function () {
         clearTimeout(cb_blank_timeout);
     }
 }
@@ -86,7 +86,7 @@ var check_slide = {
         $('#xlabs_check').show();
     },
 
-    onend: function () {
+    onstop: function () {
         Check.stop();
         $('#xlabs_check').hide();
     }
@@ -313,8 +313,8 @@ function text_slide(text) {
 }
 
 function change_slide(slide) {
-    if (slides[slidei].onend)
-        slides[slidei].onend();
+    if (slides[slidei].onstop)
+        slides[slidei].onstop();
 
     slidei = slides.indexOf(slide);
     slides[slidei].onstart();
@@ -341,7 +341,6 @@ function img_slide(fn, duration) {
             Canvas.clear();
             $('#xLabsAppCanvas').css('background-color', 'black');
             Canvas.context.drawImage(img, dest.left, dest.top, dest.width, dest.height);
-            console.log(Canvas.element.width + "x" + Canvas.element.height);
 
             // start timer
             img_timeout = setTimeout(slide_next, duration * 1000);
@@ -416,7 +415,7 @@ function cb_slide(num) {
             cb_timeout = setTimeout(slide_next, MAX_CB_DURATION);
         },
 
-        onend: function () {
+        onstop: function () {
             run_cb = false;
             clearInterval(cb_interval);
             clearTimeout(cb_timeout);
@@ -426,8 +425,8 @@ function cb_slide(num) {
 
 function slide_prev() {
     if (slidei > 0) {
-        if (slides[slidei].onend)
-            slides[slidei].onend();
+        if (slides[slidei].onstop)
+            slides[slidei].onstop();
 
         slides[--slidei].onstart();
     }
@@ -435,8 +434,8 @@ function slide_prev() {
 
 function slide_next() {
     if (slidei < slides.length - 1) {
-        if (slidei > 0 && slides[slidei].onend)
-            slides[slidei].onend();
+        if (slidei > 0 && slides[slidei].onstop)
+            slides[slidei].onstop();
 
         slides[++slidei].onstart();
     } else
@@ -583,8 +582,9 @@ window.onload = function () {
         } else {
             console.log('exiting fullscreen mode');
 
-            if (slides[slidei].onend)
-                slides[slidei].onend();
+            console.log(slides[slidei])
+            if (slides[slidei].onstop)
+                slides[slidei].onstop();
 
             $(document).off('keypress');
 
