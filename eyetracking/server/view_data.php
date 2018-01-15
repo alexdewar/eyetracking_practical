@@ -93,7 +93,7 @@ if ($pid === NULL) {
 if ($pid === -1) {
     $eye_data = array();
 
-    foreach (glob(__DIR__ . "/data/s${sid}_p*_data.json") as $fn) {
+    foreach (glob(__DIR__ . "/../data/s${sid}_p*_data.json") as $fn) {
         foreach (get_data($fn) as $key => $value) {
             if (!isset($eye_data[$key])) {
                 $eye_data[$key] = array('x' => array(), 'y' => array());
@@ -139,6 +139,10 @@ if ($pid === -1) {
     <body>
         <h2>Eye tracking data for <?= $pid === -1 ? 'all participants' : "participant $pid" ?></h2>
         <?php
+        if (count($eye_data) === 0) {
+            echo "No data found for $sid\n";
+        }
+
         foreach ($eye_data as $key => $value) {
             echo "<h3>$key</h3>\n";
 

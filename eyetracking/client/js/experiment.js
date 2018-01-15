@@ -18,7 +18,7 @@ var CB_BLANK_TICKS = 1;
 var CB_REPEATS = 2;
 var CB_BLANK_COLOUR = 'lightgray';
 
-var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking';
+var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking/server';
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 
 var IMG_FILES = [
