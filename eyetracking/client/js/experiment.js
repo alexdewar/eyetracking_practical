@@ -18,7 +18,7 @@ var CB_BLANK_TICKS = 1;
 var CB_REPEATS = 2;
 var CB_BLANK_COLOUR = 'lightgray';
 
-var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking'
+var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking';
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 
 var IMG_FILES = [
@@ -59,7 +59,7 @@ var cb_blank_slide = {
     onstop: function () {
         clearTimeout(cb_blank_timeout);
     }
-}
+};
 
 // different sets of slides for experiment
 var intro_slides = [
@@ -77,7 +77,7 @@ var check_slides = [
         onstart: check_start,
         onstop: check_end
     }
-]
+];
 var balloons_slides = [
     text_slide('<p>First you will play a game to calibrate the eye tracker.</p>' +
             '<p>The aim is to pop balloons by clicking on them. ' +
@@ -88,7 +88,7 @@ var balloons_slides = [
         onstart: balloons_start,
         onstop: balloons_end
     }
-]
+];
 var ants_slides = [
     text_slide('<p>You will now play another game.</p>' +
             '<p>The aim this time is to squash ants by clicking on them with the mouse. ' +
@@ -109,7 +109,7 @@ var yarbus_slides = [
             slide_next();
         }
     },
-    img_slide('yarbus', 30),
+    img_slide('yarbus', 30)
 ];
 var cb_slides = [
     text_slide('<p>You will now do a series of change blindness trials.</p>' +
@@ -278,7 +278,7 @@ function img_slide(fn, duration) {
         },
 
         onstop: function () {
-            clearTimeout(img_timeout)
+            clearTimeout(img_timeout);
         }
     };
 }
@@ -342,7 +342,7 @@ function cb_slide(num) {
             clearInterval(cb_interval);
             clearTimeout(cb_timeout);
         }
-    }
+    };
 }
 
 function ants_start() {
@@ -375,7 +375,7 @@ function ants_end() {
 }
 
 function balloons_start() {
-    console.log('starting balloons game')
+    console.log('starting balloons game');
 
     $('.fullscreen').hide();
     $('#balloons').show();
@@ -413,7 +413,7 @@ function on_experiment_end() {
 
         document.webkitExitFullscreen();
 
-        set_inittext('Experiment complete. Click <a href="experiment.html">here</a> to start again.')
+        set_inittext('Experiment complete. Click <a href="experiment.html">here</a> to start again.');
 
         console.log('sending data to server...');
         participant.submit_eye_data(function (data) {
@@ -535,7 +535,7 @@ window.onload = function () {
                 else if (run_cb && ev.key === ' ') {
                     participant.eye_data.push({
                         t: expt_time(),
-                        type: 'cb_keypress',
+                        type: 'cb_keypress'
                     });
                     slide_next();
                 }
@@ -556,7 +556,7 @@ window.onload = function () {
                 participant.eye_data.push({
                     t: expt_time(),
                     type: 'end'
-                })
+                });
             }
 
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
