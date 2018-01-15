@@ -1,9 +1,6 @@
-- "serverise" content
-- suppress PHP error messages on server (mucks up json!)
-
 client:
-- let Ps go back and forth between "check", calibration and test
-- hide mouse during image slides
+- let Ps go back and forth between "check", calibration and test ("choose slide")
+- hide mouse cursor during image slides
 - display each change blindness image twice (with flicker in between) and tidy
 - display warning on main page when webcam resolution isn't set to 800x600
 - xlabs: "domain not licenced" bug (still present?)
@@ -17,7 +14,10 @@ client:
 - show P own results
 
 server:
-- show stats on images (e.g. mean and CI for x and y)
+- suppress PHP error messages on server (mucks up json!)
+- clearer results text
+- easier way to view old data sets
+- show stats overlaid onto images (e.g. mean and CI for x and y)
 - show change blindness pairs so Ps can look at them after (also link from experiment.html)
 
 error handling:
