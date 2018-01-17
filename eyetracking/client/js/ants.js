@@ -1,73 +1,4 @@
-
-// Loading resources, from: http://jlongster.com/Making-Sprite-based-Games-with-Canvas
-(function() {
-    var resourceCache = {};
-    var loading = [];
-    var readyCallbacks = [];
-
-    // Load an image url or an array of image urls
-    function load(urlOrArr) {
-        if(urlOrArr instanceof Array) {
-            urlOrArr.forEach(function(url) {
-                _load(url);
-            });
-        }
-        else {
-            _load(urlOrArr);
-        }
-    }
-
-    function _load(url) {
-        if(resourceCache[url]) {
-            return resourceCache[url];
-        }
-        else {
-            var img = new Image();
-            img.onload = function() {
-                resourceCache[url] = img;
-
-                if(isReady()) {
-                    readyCallbacks.forEach(function(func) { func(); });
-                }
-            };
-            resourceCache[url] = false;
-            img.src = url;
-        }
-    }
-
-    function get(url) {
-        return resourceCache[url];
-    }
-
-    function getAll() {
-        return resourceCache;
-    }
-
-
-    function isReady() {
-        var ready = true;
-        for(var k in resourceCache) {
-            if(resourceCache.hasOwnProperty(k) &&
-               !resourceCache[k]) {
-                ready = false;
-            }
-        }
-        return ready;
-    }
-
-    function onReady(func) {
-        readyCallbacks.push(func);
-    }
-
-    window.resources = { 
-        load: load,
-        get: get,
-        onReady: onReady,
-        isReady: isReady,
-        getAll: getAll
-    };
-})();
-
+Gaze.xyLearningRate = 1.0; //0.8;
 
 XLabsAnts = function() {
 
@@ -102,20 +33,6 @@ XLabsAnts.prototype.addRandomAnt = function() {
         Math.random() * this.boxH + (window.innerHeight-this.boxH)/2,
         (Math.random()-0.5) * 0.3,
         (Math.random()-0.5) * 0.3 );
-}
-
-XLabsAnts.prototype.init = function( onReady ) {
-    resources.load([
-        'img/ants/frame_squish.png'
-    ]);
-
-    for( i = 0; i < this.NUM_ANT_WALKING_FRAMES; ++i ) {
-        resources.load(['img/ants/frame_00'+i+'.gif']);
-    }
-
-    Gaze.xyLearningRate = 1.0; //0.8;
-
-    resources.onReady( onReady );
 }
 
 XLabsAnts.prototype.mainLoop = function() {
@@ -354,10 +271,10 @@ XLabsAnts.ant.prototype.render = function( xLabsAnts ) {
         if( this.state === ANT_STATE_MOVING ) {
             var frameIdx = Math.floor( this.distanceMoved / xLabsAnts.movingAnimationFrameDistancePixels );
             frameIdx = frameIdx % xLabsAnts.NUM_ANT_WALKING_FRAMES;
-            var img = resources.get("img/ants/frame_00"+frameIdx+".gif");
+            var img = imgs["ants/frame"+frameIdx+".gif"];
         }
         else if( this.state === ANT_STATE_SQUISHED ) {
-            var img = resources.get("img/ants/frame_squish.png");
+            var img = imgs["ants/frame_squish.png"];
         }
 
         Canvas.context.drawImage( img,

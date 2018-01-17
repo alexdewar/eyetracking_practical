@@ -22,15 +22,20 @@ var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
 var XLABS_FRAME_SIZE = [800, 600]; // give error if camera res isn't this
 
 var IMG_FILES = [
-    'yarbus',
-    'change_blindness/1a',
-    'change_blindness/1b',
-    'change_blindness/2a',
-    'change_blindness/2b',
-    'change_blindness/3a',
-    'change_blindness/3b',
-    'change_blindness/4a',
-    'change_blindness/4b'
+    'ants/frame_squish.png',
+    'ants/frame0.gif',
+    'ants/frame1.gif',
+    'ants/frame2.gif',
+    'ants/frame3.gif',
+    'yarbus.jpg',
+    'change_blindness/1a.jpg',
+    'change_blindness/1b.jpg',
+    'change_blindness/2a.jpg',
+    'change_blindness/2b.jpg',
+    'change_blindness/3a.jpg',
+    'change_blindness/3b.jpg',
+    'change_blindness/4a.jpg',
+    'change_blindness/4b.jpg'
 ];
 
 var YARBUS_CONDITIONS = [
@@ -109,7 +114,7 @@ var yarbus_slides = [
             slide_next();
         }
     },
-    img_slide('yarbus', 30)
+    img_slide('yarbus.jpg', 30)
 ];
 var cb_slides = [
     text_slide('<p>You will now do a series of change blindness trials.</p>' +
@@ -210,11 +215,12 @@ function preload_images(callback) {
         imgs[fn] = img;
 
         img.onload = function () {
+            console.log('LOADED: ' + this.src);
             if (--toload === 0) {
                 callback();
             }
         };
-        img.src = 'img/' + fn + '.jpg';
+        img.src = 'img/' + fn;
     }
 }
 
@@ -291,7 +297,7 @@ function cb_slide(num) {
 
             var prefix = 'change_blindness/' + num;
 
-            var cb_imgs = [imgs[prefix + 'a'], imgs[prefix + 'b']];
+            var cb_imgs = [imgs[prefix + 'a.jpg'], imgs[prefix + 'b.jpg']];
 
             participant.eye_data.push({
                 t: expt_time(),
@@ -299,7 +305,8 @@ function cb_slide(num) {
                 trial: prefix
             });
 
-            var dests = [stimuli[IMG_FILES.indexOf(prefix + 'a')].dest, stimuli[IMG_FILES.indexOf(prefix + 'b')].dest];
+            var dests = [stimuli[IMG_FILES.indexOf(prefix + 'a.jpg')].dest,
+                         stimuli[IMG_FILES.indexOf(prefix + 'b.jpg')].dest];
 
             // draw "slide" image on canvas
             cbs = [$('#cb0'), $('#cb1')];
@@ -583,16 +590,14 @@ window.onload = function () {
      xLabs.onApiIdPath(event.detail);
      });*/
 
+    // run initialisation functions in parallel
     ants = new XLabsAnts();
-    ants.init(function ()
-    {
-        queue()
-                .defer(Participant.create)
-                .defer(preload_images)
-                .defer(Balloons.setup, slide_next)
-                .defer(xlabs_start)
-                .await(on_all_started);
-    });
+    queue()
+        .defer(Participant.create)
+        .defer(preload_images)
+        .defer(Balloons.setup, slide_next)
+        .defer(xlabs_start)
+        .await(on_all_started);
 };
 
 function go_fullscreen() {
