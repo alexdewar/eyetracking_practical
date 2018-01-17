@@ -1,4 +1,6 @@
 var DEBUG = true;
+var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking/server';
+var KEYPRESS_SKIP = DEBUG;
 
 var date = new Date();
 var SESSION_ID = DEBUG ? '0000-00-00' : date.getFullYear() + '-' +
@@ -6,8 +8,6 @@ var SESSION_ID = DEBUG ? '0000-00-00' : date.getFullYear() + '-' +
         ('0' + date.getDate()).slice(-2);
 
 console.log('SESSION ID: ' + SESSION_ID);
-
-var KEYPRESS_SKIP = DEBUG;
 
 var ANTS_GAME_DURATION = 180; // seconds
 
@@ -18,8 +18,8 @@ var CB_BLANK_TICKS = 1;
 var CB_REPEATS = 2;
 var CB_BLANK_COLOUR = 'lightgray';
 
-var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking/server';
 var XLABS_DEVELOPER_TOKEN = "2bba2616-cf81-4078-85b9-ddd16749abcb";
+var XLABS_FRAME_SIZE = [800, 600]; // give error if camera res isn't this
 
 var IMG_FILES = [
     'yarbus',
@@ -446,7 +446,14 @@ function on_xlabs_update() {
     if (!xlabs_started && mode !== 'off') {
         xlabs_started = true;
         console.log('xlabs started');
-        xlabs_start_callback();
+        var camsz = xLabs.getConfig("frame.stream");
+        if (camsz.width == XLABS_FRAME_SIZE[0] && camsz.height == XLABS_FRAME_SIZE[1])
+            xlabs_start_callback();
+        else
+            set_inittext("<h2>Error</h2>" +
+                "xLabs camera resolution is set to " + camsz.width + "x" + camsz.height +
+                " &ndash; should be " + XLABS_FRAME_SIZE[0] + "x" + XLABS_FRAME_SIZE[1] + "."
+                );
     } else if (mode === 'learning') {
         if (ants.run_game)
             ants.updateGaze();

@@ -1,8 +1,8 @@
 client:
+- refactor init code (don't use ants.init() for everything)
 - let Ps go back and forth between "check", calibration and test ("choose slide")
 - hide mouse cursor during image slides
 - display each change blindness image twice (with flicker in between) and tidy
-- display warning on main page when webcam resolution isn't set to 800x600
 - xlabs: "domain not licenced" bug (still present?)
 - don't record data when tracking suspended
 - log when tracking is suspended
