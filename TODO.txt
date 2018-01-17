@@ -1,6 +1,5 @@
 client:
 - let Ps go back and forth between "check", calibration and test ("choose slide")
-- hide mouse cursor during image slides
 - display each change blindness image twice (with flicker in between) and tidy
 - xlabs: "domain not licenced" bug (still present?)
 - don't record data when tracking suspended

@@ -54,7 +54,8 @@ var cb_blank_slide = {
     onstart: function () {
         $('.fullscreen').hide();
 
-        $('#xLabsAppCanvas').css('background-color', 'black');
+        $('#xLabsAppCanvas').css('background-color', 'black')
+                .css('cursor', 'none');
         Canvas.clear();
         Canvas.show();
 
@@ -258,7 +259,8 @@ function img_slide(fn, duration) {
 
             // draw "slide" image on canvas
             Canvas.clear();
-            $('#xLabsAppCanvas').css('background-color', 'black');
+            $('#xLabsAppCanvas').css('background-color', 'black')
+                    .css('cursor', 'none');
             Canvas.context.drawImage(img, dest.left, dest.top, dest.width, dest.height);
             console.log(Canvas.element.width + "x" + Canvas.element.height);
 
