@@ -20,7 +20,7 @@ while (true) {
 $json = json_encode(array('pid' => $pid, 'sid' => $sid, 'code' => rand()));
 
 $fid = fopen($fn, 'w');
-fwrite($fid, $json);
+fwrite($fid, "$json\n");
 fclose($fid);
 
 echo $json;
