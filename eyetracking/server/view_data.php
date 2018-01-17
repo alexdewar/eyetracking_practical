@@ -80,9 +80,9 @@ function get_data($fn) {
 }
 
 if (isset($_GET['sid'])) {
-    $sid = filter_sid($_GET['sid']);
+    $sid = filter_input(INPUT_GET, 'sid', FILTER_SANITIZE_NUMBER_INT);
 } else {
-    $sid = date('Y-m-d');
+    $sid = date('Ymd');
 }
 
 $pid = filter_input(INPUT_GET, 'pid', FILTER_SANITIZE_NUMBER_INT);
@@ -93,7 +93,7 @@ if ($pid === NULL) {
 if ($pid === -1) {
     $eye_data = array();
 
-    foreach (glob(__DIR__ . "/../data/s${sid}_p*_data.json") as $fn) {
+    foreach (glob(p_data_filename($sid, '*')) as $fn) {
         foreach (get_data($fn) as $key => $value) {
             if (!isset($eye_data[$key])) {
                 $eye_data[$key] = array('x' => array(), 'y' => array());

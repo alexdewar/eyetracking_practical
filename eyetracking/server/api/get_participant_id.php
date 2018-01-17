@@ -9,7 +9,7 @@ $sid = filter_sid($_GET['sid']);
 
 $pid = 1;
 while (true) {
-    $fn = p_filename($sid, $pid);
+    $fn = p_info_filename($sid, $pid);
     if (!file_exists($fn)) {
         break;
     }

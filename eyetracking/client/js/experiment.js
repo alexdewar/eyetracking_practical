@@ -3,8 +3,8 @@ var REMOTE_URL = 'http://users.sussex.ac.uk/~ad374/eyetracking/server';
 var KEYPRESS_SKIP = DEBUG;
 
 var date = new Date();
-var SESSION_ID = DEBUG ? '0000-00-00' : date.getFullYear() + '-' +
-        ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+var SESSION_ID = DEBUG ? '00000000' : date.getFullYear() +
+        ('0' + (date.getMonth() + 1)).slice(-2) +
         ('0' + date.getDate()).slice(-2);
 
 console.log('SESSION ID: ' + SESSION_ID);
