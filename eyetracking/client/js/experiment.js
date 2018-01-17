@@ -185,8 +185,7 @@ class Participant {
             eye_data: this.eye_data});
         $.post(REMOTE_URL + '/api/submit_eye_data.php', {data: data}, callback);
 
-        console.log('submitting data:');
-        console.log(data);
+        console.log('submitting data...');
     }
 
     static create(callback) {
