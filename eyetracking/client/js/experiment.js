@@ -122,14 +122,6 @@ var cb_slides = [
             'When you notice the change between the images, press the spacebar to continue to the next trial. ' +
             'If you don\'t notice within 60s, the trial will end automatically.</p>' +
             '<p>Click next to begin.</p>'),
-    /*{
-     onstart: function () {
-     testphase = true;
-     teststarttime = performance.now();
-
-     slide_next();
-     }
-     },*/
     cb_blank_slide,
     cb_slide(1),
     cb_blank_slide,
@@ -311,7 +303,6 @@ function cb_slide(num) {
             // draw "slide" image on canvas
             cbs = [$('#cb0'), $('#cb1')];
             for (var i in cbs) {
-                //var i = 0;
                 var cur = cbs[i][0];
                 cur.width = screen.width;
                 cur.height = screen.height;
@@ -576,19 +567,6 @@ window.onload = function () {
             $('.fullscreen').hide(); // hide all the "fullscreen" elements
         }
     });
-
-    /*// add event listeners
-     document.addEventListener("xLabsApiReady", function () {
-     xLabs.onApiReady();
-     });
-
-     document.addEventListener("xLabsApiState", function (event) {
-     xLabs.onApiState(event.detail);
-     });
-
-     document.addEventListener("xLabsApiIdPath", function (event) {
-     xLabs.onApiIdPath(event.detail);
-     });*/
 
     // run initialisation functions in parallel
     ants = new XLabsAnts();
