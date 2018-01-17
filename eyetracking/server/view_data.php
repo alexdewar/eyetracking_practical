@@ -39,7 +39,6 @@ function get_data($fn) {
     }
 
     $ctrial = '';
-    $stop = false;
     foreach ($pdata['eye_data'] as $msg) {
         switch ($msg['type']) {
             case 'trial':
@@ -67,12 +66,7 @@ function get_data($fn) {
 
                 break;
             case 'end':
-                $stop = true;
-                break;
-        }
-
-        if ($stop) {
-            break;
+                return $eye_data;
         }
     }
 
@@ -116,7 +110,6 @@ if ($pid === -1) {
 ?><html>
     <head>
         <title>View eye tracking data</title>
-        <link rel='shortcut icon' href='img/favicon.ico' type='image/x-icon'>
         <meta charset='UTF-8'>
 
         <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
