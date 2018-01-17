@@ -208,7 +208,6 @@ function preload_images(callback) {
         imgs[fn] = img;
 
         img.onload = function () {
-            console.log('LOADED: ' + this.src);
             if (--toload === 0) {
                 callback();
             }
