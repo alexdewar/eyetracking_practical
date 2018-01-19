@@ -67,6 +67,27 @@ var cb_blank_slide = {
     }
 };
 
+var submit_data_slide = {
+    onstart: function() {
+        // hide previous/next buttons for now
+        $('#prev_next').hide();
+
+        set_instruction_text("Submitting data to server...");
+        
+        // try to submit data to server
+        participant.submit_data(
+            function() { //success
+                set_instruction_text("Data submitted to server.<br><br>" + 
+                    "Experiment completed! Thank you for taking part.");
+                $('#prev_next').show();
+            },
+            function() { //fail
+                set_instruction_text("Error sending data to server :-(");
+                $('#prev_next').show();
+            });
+    }
+};
+
 // different sets of slides for experiment
 var intro_slides = [
     text_slide('<p>Welcome to the eye tracking practical.</p> ' +
@@ -140,13 +161,19 @@ var slides = intro_slides
         .concat(ants_slides)
         .concat(yarbus_slides)
         .concat(cb_slides)
-        .concat([
-            text_slide('Experiment completed! Thank you for taking part.')
-        ]);
+        .concat(submit_data_slide);
 
 var imgs = []; // array for preloaded images
 
 var xlabs_started = false;
+
+function set_instruction_text(text) {
+    // hide other fullscreen elements
+    $('.fullscreen').hide();
+
+    $('#text')[0].innerHTML = text;
+    $('#textbox').show();
+}
 
 function check_start() {
     $('.fullscreen').hide();
@@ -173,7 +200,9 @@ class Participant {
         console.log('participant assigned to condition ' + this.yarbus_condition + " ('" + YARBUS_CONDITIONS[this.yarbus_condition] + "')");
     }
 
-    submit_eye_data(callback) {
+    submit_data(success,fail) {
+        console.log('submitting data...');
+        
         var data = JSON.stringify({
             sid: SESSION_ID,
             pid: this.pid,
@@ -183,9 +212,17 @@ class Participant {
             yarbus_condition: this.yarbus_condition,
             yarbus_conditions: YARBUS_CONDITIONS,
             eye_data: this.eye_data});
-        $.post(REMOTE_URL + '/api/submit_eye_data.php', {data: data}, callback);
-
-        console.log('submitting data...');
+        $.post(REMOTE_URL + '/api/submit_data.php', {data: data},
+            function(ret) {
+                if (ret.status === "ok") {
+                    console.log("data submitted successfully");
+                    success();
+                }
+                else {
+                    console.error("error submitting data: " + ret.status)
+                    fail();
+                }
+            }).fail(fail);
     }
 
     static create(callback) {
@@ -220,13 +257,7 @@ function preload_images(callback) {
 function text_slide(text) {
     return {
         onstart: function () {
-            $('.fullscreen').hide();
-
-            // change instruction text
-            $('#text')[0].innerHTML = text;
-
-            // make instruction textbox visible
-            $('#textbox').show();
+            set_instruction_text(text);
         }
     };
 }
@@ -234,16 +265,10 @@ function text_slide(text) {
 function yarbus_instructions() {
     return {
         onstart: function () {
-            $('.fullscreen').hide();
-
-            // change instruction text
-            $('#text')[0].innerHTML = '<p>This is now the testing phase of the experiment.</p>' +
-                    '<p>You now be shown a scene with a family in.</p>' +
-                    '<p>' + YARBUS_CONDITIONS[participant.yarbus_condition] + '</p>' +
-                    '<p>Click next to begin.</p>';
-
-            // make instruction textbox visible
-            $('#textbox').show();
+            set_instruction_text('<p>This is now the testing phase of the experiment.</p>' +
+                '<p>You now be shown a scene with a family in.</p>' +
+                '<p>' + YARBUS_CONDITIONS[participant.yarbus_condition] + '</p>' +
+                '<p>Click next to begin.</p>');
         }
     };
 }
@@ -414,11 +439,6 @@ function on_experiment_end() {
         document.webkitExitFullscreen();
 
         set_bodytext('Experiment complete. Click <a href="experiment.html">here</a> to start again.');
-
-        console.log('sending data to server...');
-        participant.submit_eye_data(function (data) {
-            console.log('response from server: ' + data.status);
-        });
     }
 }
 

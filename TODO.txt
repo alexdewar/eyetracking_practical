@@ -4,7 +4,6 @@ client:
 - xlabs: "domain not licenced" bug (still present?)
 - don't record data when tracking suspended
 - log when tracking is suspended
-- slide to show progress of data submission to server
 - better initial text display for page
 - fix fuzzy text in check slide
 - better next/prev buttons for textbox
