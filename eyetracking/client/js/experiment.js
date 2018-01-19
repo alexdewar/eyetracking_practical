@@ -411,7 +411,7 @@ function on_experiment_end() {
 
         document.webkitExitFullscreen();
 
-        set_inittext('Experiment complete. Click <a href="experiment.html">here</a> to start again.');
+        set_bodytext('Experiment complete. Click <a href="experiment.html">here</a> to start again.');
 
         console.log('sending data to server...');
         participant.submit_eye_data(function (data) {
@@ -448,10 +448,8 @@ function on_xlabs_update() {
         if (camsz.width == XLABS_FRAME_SIZE[0] && camsz.height == XLABS_FRAME_SIZE[1])
             xlabs_start_callback();
         else
-            set_inittext("<h2>Error</h2>" +
-                "xLabs camera resolution is set to " + camsz.width + "x" + camsz.height +
-                " &ndash; should be " + XLABS_FRAME_SIZE[0] + "x" + XLABS_FRAME_SIZE[1] + "."
-                );
+            set_bodyerror("xLabs camera resolution is set to " + camsz.width + "x" + camsz.height +
+                " &ndash; should be " + XLABS_FRAME_SIZE[0] + "x" + XLABS_FRAME_SIZE[1] + ".");
     } else if (mode === 'learning') {
         if (ants.run_game)
             ants.updateGaze();
@@ -472,8 +470,12 @@ function expt_time() {
     return performance.now() - teststarttime;
 }
 
-function set_inittext(text) {
-    $('#inittext')[0].innerHTML = text;
+function set_bodytext(text) {
+    $('#bodytext')[0].innerHTML = text;
+}
+
+function set_bodyerror(err) {
+    set_bodytext("<h2>Error</h2>\n" + err);
 }
 
 function set_canvas_click(f) {
@@ -513,18 +515,15 @@ function on_all_started(error) {
             dest: dest
         });
     }
-    set_inittext("<p>Welcome to the eye tracking practical! " +
+    set_bodytext("<p>Welcome to the eye tracking practical! " +
             "You are participant number " + participant.pid + ".</p>" +
             "<p>Click <a href='#' onclick='go_fullscreen();'>here</a> to begin the experiment.</p>");
 }
 
 window.onload = function () {
     if (xLabs.extensionVersion() === null) { // no xlabs or not running in chrome
-        set_inittext(
-                "<h2>Error</h2>" +
-                "This webpage must be viewed in Google Chrome " +
-                "and <a href='https://chrome.google.com/webstore/detail/xlabs-headeyegaze-tracker/emeeadaoegehllidjmmokeaahobondco?hl=en'>the xLabs Chrome extension</a> must be installed."
-                );
+        set_bodyerror("This webpage must be viewed in Google Chrome " +
+                "and <a href='https://chrome.google.com/webstore/detail/xlabs-headeyegaze-tracker/emeeadaoegehllidjmmokeaahobondco?hl=en'>the xLabs Chrome extension</a> must be installed.");
         return;
     }
 
