@@ -7,8 +7,6 @@ var SESSION_ID = DEBUG ? '00000000' : date.getFullYear() +
         ('0' + (date.getMonth() + 1)).slice(-2) +
         ('0' + date.getDate()).slice(-2);
 
-console.log('SESSION ID: ' + SESSION_ID);
-
 var ANTS_GAME_DURATION = 180; // seconds
 
 var MAX_CB_DURATION = 60000; // milliseconds
@@ -68,23 +66,23 @@ var cb_blank_slide = {
 };
 
 var submit_data_slide = {
-    onstart: function() {
+    onstart: function () {
         // hide previous/next buttons for now
         $('#prev_next').hide();
 
         set_instruction_text("Submitting data to server...");
-        
+
         // try to submit data to server
         participant.submit_data(
-            function() { //success
-                set_instruction_text("Data submitted to server.<br><br>" + 
-                    "Experiment completed! Thank you for taking part.");
-                $('#prev_next').show();
-            },
-            function() { //fail
-                set_instruction_text("Error sending data to server :-(");
-                $('#prev_next').show();
-            });
+                function () { //success
+                    set_instruction_text("Data submitted to server.<br><br>" +
+                            "Experiment completed! Thank you for taking part.");
+                    $('#prev_next').show();
+                },
+                function () { //fail
+                    set_instruction_text("Error sending data to server :-(");
+                    $('#prev_next').show();
+                });
     }
 };
 
@@ -200,9 +198,9 @@ class Participant {
         console.log('participant assigned to condition ' + this.yarbus_condition + " ('" + YARBUS_CONDITIONS[this.yarbus_condition] + "')");
     }
 
-    submit_data(success,fail) {
+    submit_data(success, fail) {
         console.log('submitting data...');
-        
+
         var data = JSON.stringify({
             sid: SESSION_ID,
             pid: this.pid,
@@ -213,23 +211,22 @@ class Participant {
             yarbus_conditions: YARBUS_CONDITIONS,
             eye_data: this.eye_data});
         $.post(REMOTE_URL + '/api/submit_data.php', {data: data},
-            function(ret) {
-                if (ret.status === "ok") {
-                    console.log("data submitted successfully");
-                    success();
-                }
-                else {
-                    console.error("error submitting data: " + ret.status)
-                    fail();
-                }
-            }).fail(fail);
+                function (ret) {
+                    if (ret.status === "ok") {
+                        console.log("data submitted successfully");
+                        success();
+                    } else {
+                        console.error("error submitting data: " + ret.status)
+                        fail();
+                    }
+                }).fail(fail);
     }
 
     static create(callback) {
         $.getJSON(REMOTE_URL + '/api/get_participant_id.php?sid=' + SESSION_ID, function (json) {
             participant = new Participant(json.pid, json.code);
             callback();
-        }).fail(function() {
+        }).fail(function () {
             set_bodyerror("Could not get participant ID from server.")
         });
     }
@@ -266,9 +263,9 @@ function yarbus_instructions() {
     return {
         onstart: function () {
             set_instruction_text('<p>This is now the testing phase of the experiment.</p>' +
-                '<p>You now be shown a scene with a family in.</p>' +
-                '<p>' + YARBUS_CONDITIONS[participant.yarbus_condition] + '</p>' +
-                '<p>Click next to begin.</p>');
+                    '<p>You now be shown a scene with a family in.</p>' +
+                    '<p>' + YARBUS_CONDITIONS[participant.yarbus_condition] + '</p>' +
+                    '<p>Click next to begin.</p>');
         }
     };
 }
@@ -287,7 +284,6 @@ function img_slide(fn, duration) {
             $('#xLabsAppCanvas').css('background-color', 'black')
                     .css('cursor', 'none');
             Canvas.context.drawImage(img, dest.left, dest.top, dest.width, dest.height);
-            console.log(Canvas.element.width + "x" + Canvas.element.height);
 
             // start timer
             img_timeout = setTimeout(slide_next, duration * 1000);
@@ -297,6 +293,8 @@ function img_slide(fn, duration) {
                 type: 'trial',
                 trial: fn
             });
+
+            console.log("starting task: " + fn);
 
             // make canvas visible
             Canvas.show();
@@ -314,6 +312,8 @@ function cb_slide(num) {
         onstart: function () {
             $('.fullscreen').hide();
 
+            console.log("starting task: change blindness #" + num);
+
             var prefix = 'change_blindness/' + num;
 
             var cb_imgs = [imgs[prefix + 'a.jpg'], imgs[prefix + 'b.jpg']];
@@ -325,7 +325,7 @@ function cb_slide(num) {
             });
 
             var dests = [stimuli[IMG_FILES.indexOf(prefix + 'a.jpg')].dest,
-                         stimuli[IMG_FILES.indexOf(prefix + 'b.jpg')].dest];
+                stimuli[IMG_FILES.indexOf(prefix + 'b.jpg')].dest];
 
             // draw "slide" image on canvas
             cbs = [$('#cb0'), $('#cb1')];
@@ -471,7 +471,7 @@ function on_xlabs_update() {
             xlabs_start_callback();
         else
             set_bodyerror("xLabs camera resolution is set to " + camsz.width + "x" + camsz.height +
-                " &ndash; should be " + XLABS_FRAME_SIZE[0] + "x" + XLABS_FRAME_SIZE[1] + ".");
+                    " &ndash; should be " + XLABS_FRAME_SIZE[0] + "x" + XLABS_FRAME_SIZE[1] + ".");
     } else if (mode === 'learning') {
         if (ants.run_game)
             ants.updateGaze();
@@ -543,6 +543,11 @@ function on_all_started(error) {
 }
 
 window.onload = function () {
+    if (DEBUG) {
+        console.log("!!! WARNING: RUNNING IN DEBUG MODE !!!");
+    }
+    console.log('SESSION ID: ' + SESSION_ID);
+
     if (xLabs.extensionVersion() === null) { // no xlabs or not running in chrome
         set_bodyerror("This webpage must be viewed in Google Chrome " +
                 "and <a href='https://chrome.google.com/webstore/detail/xlabs-headeyegaze-tracker/emeeadaoegehllidjmmokeaahobondco?hl=en'>the xLabs Chrome extension</a> must be installed.");
@@ -592,11 +597,11 @@ window.onload = function () {
     // run initialisation functions in parallel
     ants = new XLabsAnts();
     queue()
-        .defer(Participant.create)
-        .defer(preload_images)
-        .defer(Balloons.setup, slide_next)
-        .defer(xlabs_start)
-        .await(on_all_started);
+            .defer(Participant.create)
+            .defer(preload_images)
+            .defer(Balloons.setup, slide_next)
+            .defer(xlabs_start)
+            .await(on_all_started);
 };
 
 function go_fullscreen() {
