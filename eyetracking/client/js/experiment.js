@@ -192,6 +192,8 @@ class Participant {
         $.getJSON(REMOTE_URL + '/api/get_participant_id.php?sid=' + SESSION_ID, function (json) {
             participant = new Participant(json.pid, json.code);
             callback();
+        }).fail(function() {
+            set_bodyerror("Could not get participant ID from server.")
         });
     }
 }
