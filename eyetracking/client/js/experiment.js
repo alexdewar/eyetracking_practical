@@ -194,7 +194,7 @@ class Participant {
         this.code = code;
         this.eye_data = [];
 
-        this.yarbus_condition = Math.round(Math.random() * (yarbus_conditions.length - 1));
+        this.yarbus_condition = pid % yarbus_conditions.length;
         console.log('participant assigned to condition ' + this.yarbus_condition + " ('" + yarbus_conditions[this.yarbus_condition] + "')");
     }
 
