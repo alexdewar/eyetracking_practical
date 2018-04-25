@@ -60,23 +60,29 @@ try {
     <body>
         <h2>Eye tracking data for <?=$pid === -1 ? 'all participants' : "participant $pid"?></h2>
         <?php
+define('DP',2);
 foreach ($eye_data as $key => $value) {
     echo "<h3>$key</h3>\n";
 
     list($meanx, $count) = nanmean($value['x']);
     echo "<ul><li><i>n</i>: $count</li>\n";
 
-    echo "<li><i>x</i>: $meanx &plusmn;" . nanci95($value['x'], $meanx) . "</li>\n";
+    $meanx = round($meanx, DP);
+    echo "<li><i>x</i>: $meanx &plusmn; " .
+        round(nanci95($value['x'], $meanx), DP) . "</li>\n";
 
-    $meany = nanmean($value['y'])[0];
-    echo "<li><i>y</i>: $meany &plusmn;" . nanci95($value['y'], $meany) . "</li>";
+    $meany = round(nanmean($value['y'])[0], DP);
+    echo "<li><i>y</i>: $meany &plusmn; " .
+        round(nanci95($value['y'], $meany), DP) . "</li>";
 
     list($meandur, $durcount) = nanmean($value['duration']);
     if ($durcount === 0) {
         echo "</ul>\n";
         continue;
     }
-    echo "<li><i>duration</i>: $meandur &plusmn;" . nanci95($value['duration'], $meandur) .
+    $meandur = round($meandur, DP);
+    echo "<li><i>duration</i>: $meandur &plusmn; " .
+        round(nanci95($value['duration'], $meandur), DP) .
         " (<i>n</i> = $durcount)</li></ul>\n";
 }
 
