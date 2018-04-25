@@ -2,3 +2,4 @@
 /data/00000000_*.json
 *.csv
 .~lock.*\#
+matlab/**/*.jpg
