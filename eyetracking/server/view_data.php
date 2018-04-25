@@ -69,7 +69,15 @@ foreach ($eye_data as $key => $value) {
     echo "<li><i>x</i>: $meanx &plusmn;" . nanci95($value['x'], $meanx) . "</li>\n";
 
     $meany = nanmean($value['y'])[0];
-    echo "<li><i>y</i>: $meany &plusmn;" . nanci95($value['y'], $meany) . "</li></ul>\n";
+    echo "<li><i>y</i>: $meany &plusmn;" . nanci95($value['y'], $meany) . "</li>";
+
+    list($meandur, $durcount) = nanmean($value['duration']);
+    if ($durcount === 0) {
+        echo "</ul>\n";
+        continue;
+    }
+    echo "<li><i>duration</i>: $meandur &plusmn;" . nanci95($value['duration'], $meandur) .
+        " (<i>n</i> = $durcount)</li></ul>\n";
 }
 
 /* foreach ($pdata['stimuli'] as $stim) {
