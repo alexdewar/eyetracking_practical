@@ -10,5 +10,5 @@ if exist(fname,'file')
 end
 
 url = ['http://users.sussex.ac.uk/~ad374/eyetracking/server/download_data.php?sid=' yyyymmdd];
-fprintf('Downloading from %s...\n', url);
+disp(['Downloading from ' url]);
 urlwrite(url,fname);

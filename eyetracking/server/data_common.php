@@ -42,6 +42,7 @@ function get_data($fn)
     }
 
     $ctrial = '';
+    $startt = NAN;
     foreach ($pdata['eye_data'] as $msg) {
         switch ($msg['type']) {
             case 'trial':
@@ -52,7 +53,7 @@ function get_data($fn)
 
                 $eye_data[$ctrial]['x'] = array();
                 $eye_data[$ctrial]['y'] = array();
-
+                $startt = (float) $msg['t'];
                 break;
             case 'rec':
                 if ($ctrial === '') {
@@ -66,7 +67,10 @@ function get_data($fn)
 
                 array_push($eye_data[$ctrial]['x'], $msg['x']);
                 array_push($eye_data[$ctrial]['y'], $msg['y']);
-
+                break;
+            case 'cb_keypress':
+                $endt = (float) $msg['t'];
+                $eye_data[$ctrial]['duration'] = $endt - $startt;
                 break;
             case 'end':
                 return $eye_data;
@@ -84,11 +88,19 @@ function get_eye_data($sid, $pid)
         foreach (glob(p_data_filename($sid, '*')) as $fn) {
             foreach (get_data($fn) as $key => $value) {
                 if (!isset($eye_data[$key])) {
-                    $eye_data[$key] = array('x' => array(), 'y' => array());
+                    $eye_data[$key] = array('x' => array(), 'y' => array(),
+                        'duration' => array());
                 }
 
+                if (!isset($value['x'])) {
+                    array_push($eye_data[$key]['x'], NAN);
+                    array_push($eye_data[$key]['y'], NAN);
+                    continue;
+                }
                 array_push($eye_data[$key]['x'], nanmean($value['x'])[0]);
                 array_push($eye_data[$key]['y'], nanmean($value['y'])[0]);
+                array_push($eye_data[$key]['duration'],
+                    isset($value['duration']) ? $value['duration'] : NAN);
             }
         }
         return $eye_data;
