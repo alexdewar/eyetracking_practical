@@ -1,4 +1,9 @@
 function data=readdata(yyyymmdd)
+if nargin < 1
+    % if no date specified, use today's date
+    yyyymmdd = datestr(now,'yyyymmdd');
+end
+
 fname = [yyyymmdd '.csv'];
 if ~exist(fname,'file')
     downloaddata(yyyymmdd);
