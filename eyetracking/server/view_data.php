@@ -35,6 +35,9 @@ try {
 } catch (Exception $e) {
     die('Error: ' . $e->getMessage());
 }
+
+// sort array by key names
+ksort($eye_data);
 ?><html>
     <head>
         <title>View eye tracking data</title>
@@ -63,6 +66,9 @@ try {
 define('DP',2);
 foreach ($eye_data as $key => $value) {
     echo "<h3>$key</h3>\n";
+    if (substr($key, 0, strlen('change_blindness')) === 'change_blindness') {
+        echo "<a href='../${key}a.jpg'>Image A</a> | <a href='../${key}b.jpg'>Image B</a>\n";
+    }
 
     list($meanx, $count) = nanmean($value['x']);
     echo "<ul><li><i>n</i>: $count</li>\n";
