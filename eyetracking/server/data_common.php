@@ -1,11 +1,27 @@
 <?php
-require('common.php');
+require 'common.php';
 
-function mean($x) {
-    return array_sum($x) / count($x);
+function nansum($x)
+{
+    $sum = 0;
+    $count = 0;
+    foreach ($x as $i) {
+        if (!is_nan($i)) {
+            $sum += $i;
+            $count++;
+        }
+    }
+    return $count === 0 ? array(NAN, 0) : array($sum, $count);
 }
 
-function get_data($fn) {
+function nanmean($x)
+{
+    $arr = nansum($x);
+    return $arr[1] === 0 ? $arr : array($arr[0] / $arr[1], $arr[1]);
+}
+
+function get_data($fn)
+{
     $pdata = json_decode(file_get_contents($fn), true);
 
     $yarbus_cond = $pdata['yarbus_condition'];
@@ -60,20 +76,19 @@ function get_data($fn) {
     return $eye_data;
 }
 
-function get_eye_data($sid, $pid) {
+function get_eye_data($sid, $pid)
+{
     if ($pid === -1) {
         $eye_data = array();
-    
+
         foreach (glob(p_data_filename($sid, '*')) as $fn) {
             foreach (get_data($fn) as $key => $value) {
                 if (!isset($eye_data[$key])) {
                     $eye_data[$key] = array('x' => array(), 'y' => array());
                 }
-    
-                if (count($value['x']) > 0) {
-                    array_push($eye_data[$key]['x'], mean($value['x']));
-                    array_push($eye_data[$key]['y'], mean($value['y']));
-                }
+
+                array_push($eye_data[$key]['x'], nanmean($value['x'])[0]);
+                array_push($eye_data[$key]['y'], nanmean($value['y'])[0]);
             }
         }
         return $eye_data;

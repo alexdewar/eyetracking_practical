@@ -1,18 +1,22 @@
 <?php
-require('data_common.php');
+require 'data_common.php';
 
-function std($x, $mean) {
+function nanstd($x, $mean)
+{
     $diffs = array();
 
     for ($i = 0; $i < count($x); $i++) {
         $diffs[$i] = ($mean - $x[$i]) ** 2;
     }
 
-    return sqrt(array_sum($diffs) / (count($diffs) - 1));
+    list($sum, $count) = nansum($diffs);
+    return array(sqrt($sum / ($count - 1)), $count);
 }
 
-function ci95($x, $mean) {
-    return 1.96 * std($x, $mean) / sqrt(count($x));
+function nanci95($x, $mean)
+{
+    list($std, $count) = nanstd($x, $mean);
+    return 1.96 * $std / sqrt($count);
 }
 
 if (isset($_GET['sid'])) {
@@ -22,7 +26,7 @@ if (isset($_GET['sid'])) {
 }
 
 $pid = filter_input(INPUT_GET, 'pid', FILTER_SANITIZE_NUMBER_INT);
-if ($pid === NULL) {
+if ($pid === null) {
     $pid = -1;
 }
 
@@ -50,27 +54,27 @@ $eye_data = get_eye_data($sid, $pid);
         </style>
     </head>
     <body>
-        <h2>Eye tracking data for <?= $pid === -1 ? 'all participants' : "participant $pid" ?></h2>
+        <h2>Eye tracking data for <?=$pid === -1 ? 'all participants' : "participant $pid"?></h2>
         <?php
-        if (count($eye_data) === 0) {
-            echo "No data found for $sid\n";
-        }
+if (count($eye_data) === 0) {
+    echo "No data found for $sid\n";
+}
 
-        foreach ($eye_data as $key => $value) {
-            echo "<h3>$key</h3>\n";
+foreach ($eye_data as $key => $value) {
+    echo "<h3>$key</h3>\n";
 
-            echo "<ul><li><i>n</i>: " . count($value['x']) . "</li>\n";
+    list($meanx, $count) = nanmean($value['x']);
+    echo "<ul><li><i>n</i>: $count</li>\n";
 
-            $meanx = mean($value['x']);
-            echo "<li><i>x</i>: $meanx &plusmn;" . ci95($value['x'], $meanx) . "</li>\n";
+    echo "<li><i>x</i>: $meanx &plusmn;" . nanci95($value['x'], $meanx) . "</li>\n";
 
-            $meany = mean($value['y']);
-            echo "<li><i>y</i>: $meany &plusmn;" . ci95($value['y'], $meany) . "</li></ul>\n";
-        }
+    $meany = nanmean($value['y'])[0];
+    echo "<li><i>y</i>: $meany &plusmn;" . nanci95($value['y'], $meany) . "</li></ul>\n";
+}
 
-        /* foreach ($pdata['stimuli'] as $stim) {
-          echo "<img src='img/${stim['name']}.jpg' /> <br>\n";
-          } */
-        ?>
+/* foreach ($pdata['stimuli'] as $stim) {
+echo "<img src='img/${stim['name']}.jpg' /> <br>\n";
+} */
+?>
     </body>
 </html>
