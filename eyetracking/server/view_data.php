@@ -63,11 +63,18 @@ ksort($eye_data);
     <body>
         <h2>Eye tracking data for <?=$pid === -1 ? 'all participants' : "participant $pid"?></h2>
         <?php
+const YARBUS = array(
+    'Your task is to estimate the wealth of the family.',
+    'Your task is to guess for how long the man in the image has been away.'
+    );
+
 define('DP',2);
 foreach ($eye_data as $key => $value) {
     echo "<h3>$key</h3>\n";
     if (substr($key, 0, strlen('change_blindness')) === 'change_blindness') {
         echo "<a href='../${key}a.jpg'>Image A</a> | <a href='../${key}b.jpg'>Image B</a>\n";
+    } elseif (substr($key, 0, strlen('yarbus')) == 'yarbus') {
+        echo '"' . YARBUS[substr($key, -1)] . '"';
     }
 
     list($meanx, $count) = nanmean($value['x']);
