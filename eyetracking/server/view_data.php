@@ -12,7 +12,7 @@ function std($x, $mean) {
         $diffs[$i] = ($mean - $x[$i]) ** 2;
     }
 
-    return sqrt(mean($diffs));
+    return sqrt(array_sum($diffs) / (count($diffs) - 1));
 }
 
 function ci95($x, $mean) {
