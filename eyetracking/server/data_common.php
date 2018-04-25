@@ -103,12 +103,15 @@ function get_eye_data($sid, $pid)
                     isset($value['duration']) ? $value['duration'] : NAN);
             }
         }
+        if (count($eye_data) === 0) {
+            throw new Exception("no data found for session $sid");
+        }
         return $eye_data;
     }
 
     $fn = p_data_filename($sid, $pid);
     if (!file_exists($fn)) {
-        die("Error: no data found for participant $pid (session: $sid)");
+        throw new Exception("no data found for participant $pid (session: $sid)");
     }
 
     return get_data($fn);

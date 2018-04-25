@@ -12,7 +12,12 @@ if ($pid === null) {
     $pid = -1;
 }
 
-$eye_data = get_eye_data($sid, $pid);
+try {
+    $eye_data = get_eye_data($sid, $pid);
+} catch (Exception $e) {
+    http_response_code(404);
+    exit;
+}
 
 header('Content-Type: text/csv');
 header("Content-Disposition: inline; filename=$sid.csv");

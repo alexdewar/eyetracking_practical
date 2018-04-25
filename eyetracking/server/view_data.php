@@ -30,7 +30,11 @@ if ($pid === null) {
     $pid = -1;
 }
 
-$eye_data = get_eye_data($sid, $pid);
+try {
+    $eye_data = get_eye_data($sid, $pid);
+} catch (Exception $e) {
+    die('Error: ' . $e->getMessage());
+}
 ?><html>
     <head>
         <title>View eye tracking data</title>
@@ -56,10 +60,6 @@ $eye_data = get_eye_data($sid, $pid);
     <body>
         <h2>Eye tracking data for <?=$pid === -1 ? 'all participants' : "participant $pid"?></h2>
         <?php
-if (count($eye_data) === 0) {
-    echo "No data found for $sid\n";
-}
-
 foreach ($eye_data as $key => $value) {
     echo "<h3>$key</h3>\n";
 
