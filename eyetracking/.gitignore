@@ -1,2 +1,4 @@
 /data/info_*.json
 /data/00000000_*.json
+*.csv
+.~lock.*\#
