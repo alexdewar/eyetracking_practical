@@ -1,21 +1,32 @@
 <?php
 require 'data_common.php';
 
-if (isset($_GET['sid'])) {
-    $sid = filter_input(INPUT_GET, 'sid', FILTER_SANITIZE_NUMBER_INT);
+$iscli = php_sapi_name() === 'cli';
+if ($iscli) {
+    $nargs = count($argv);
+    $pid = $nargs < 3 ? -1 : $argv[2];
+    $sid = $nargs == 1 ? date('Ymd') : $argv[1];
 } else {
-    $sid = date('Ymd');
-}
+    if (isset($_GET['sid'])) {
+        $sid = filter_input(INPUT_GET, 'sid', FILTER_SANITIZE_NUMBER_INT);
+    } else {
+        $sid = date('Ymd');
+    }
 
-$pid = filter_input(INPUT_GET, 'pid', FILTER_SANITIZE_NUMBER_INT);
-if ($pid === null) {
-    $pid = -1;
+    $pid = filter_input(INPUT_GET, 'pid', FILTER_SANITIZE_NUMBER_INT);
+    if ($pid === null) {
+        $pid = -1;
+    }
 }
 
 try {
     $eye_data = get_eye_data($sid, $pid);
 } catch (Exception $e) {
-    http_response_code(404);
+    if ($iscli) {
+        echo 'Error: ' . $e->getMessage() . "\n";
+    } else {
+        http_response_code(404);
+    }
     exit;
 }
 
