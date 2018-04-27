@@ -65,15 +65,15 @@ ksort($eye_data);
         <?php
 const YARBUS = array(
     'Your task is to estimate the wealth of the family.',
-    'Your task is to guess for how long the man in the image has been away.'
-    );
+    'Your task is to guess for how long the man in the image has been away.',
+);
 
-define('DP',2);
+define('DP', 2);
 foreach ($eye_data as $key => $value) {
     echo "<h3>$key</h3>\n";
-    if (substr($key, 0, strlen('change_blindness')) === 'change_blindness') {
+    if (startswith($key, 'change_blindness')) {
         echo "<a href='../${key}a.jpg'>Image A</a> | <a href='../${key}b.jpg'>Image B</a>\n";
-    } elseif (substr($key, 0, strlen('yarbus')) == 'yarbus') {
+    } elseif (startswith($key, 'yarbus')) {
         echo '"' . YARBUS[substr($key, -1)] . '"';
     }
 
@@ -82,11 +82,11 @@ foreach ($eye_data as $key => $value) {
 
     $meanx = round($meanx, DP);
     echo "<li><i>x</i>: $meanx &plusmn; " .
-        round(nanci95($value['x'], $meanx), DP) . "</li>\n";
+    round(nanci95($value['x'], $meanx), DP) . "</li>\n";
 
     $meany = round(nanmean($value['y'])[0], DP);
     echo "<li><i>y</i>: $meany &plusmn; " .
-        round(nanci95($value['y'], $meany), DP) . "</li>";
+    round(nanci95($value['y'], $meany), DP) . "</li>";
 
     list($meandur, $durcount) = nanmean($value['duration']);
     if ($durcount === 0) {
@@ -95,7 +95,7 @@ foreach ($eye_data as $key => $value) {
     }
     $meandur = round($meandur, DP);
     echo "<li><i>duration</i>: $meandur &plusmn; " .
-        round(nanci95($value['duration'], $meandur), DP) .
+    round(nanci95($value['duration'], $meandur), DP) .
         " (<i>n</i> = $durcount)</li></ul>\n";
 }
 

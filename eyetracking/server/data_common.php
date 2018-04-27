@@ -20,6 +20,12 @@ function nanmean($x)
     return $arr[1] === 0 ? $arr : array($arr[0] / $arr[1], $arr[1]);
 }
 
+function startswith($s, $startstr)
+{
+    $sublen = strlen($startstr);
+    return strlen($s) >= $sublen && substr($s, 0, $sublen) === $startstr;
+}
+
 function get_data($fn)
 {
     $pdata = json_decode(file_get_contents($fn), true);
@@ -29,7 +35,6 @@ function get_data($fn)
     $eye_data = array();
     foreach ($pdata['stimuli'] as $stim) {
         $name = $stim['name'];
-
         if ($name === 'yarbus') {
             $name .= $yarbus_cond;
         } else {
