@@ -34,11 +34,13 @@ function get_data($fn)
 
     $eye_data = array();
     foreach ($pdata['stimuli'] as $stim) {
-        $name = $stim['name'];
+        $name = preg_replace('/\.[^\.]+$/', '', $stim['name']);
         if ($name === 'yarbus') {
             $name .= $yarbus_cond;
-        } else {
+        } elseif (startswith($name, 'change_blindness/')) {
             $name = substr($name, 0, strlen($name) - 1);
+        } else {
+            continue;
         }
 
         // size of image stimuli, before and after resizing to fill P's screen
@@ -51,7 +53,7 @@ function get_data($fn)
     foreach ($pdata['eye_data'] as $msg) {
         switch ($msg['type']) {
             case 'trial':
-                $ctrial = $msg['trial'];
+                $ctrial = preg_replace('/\.[^\.]+$/', '', $msg['trial']);
                 if ($ctrial === 'yarbus') {
                     $ctrial .= $yarbus_cond;
                 }
